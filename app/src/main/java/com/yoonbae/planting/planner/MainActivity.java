@@ -1,10 +1,12 @@
 package com.yoonbae.planting.planner;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
@@ -21,6 +23,12 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         setContentView(R.layout.activity_main);
         calendarView = findViewById(R.id.calendarView);
         calendarSetting();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
+        //BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Intent intent;
+            return false;
+        });
     }
 
     private void calendarSetting() {
