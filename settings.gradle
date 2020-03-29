@@ -1,0 +1,2 @@
+rootProject.name='planting-planner'
+include ':app'
