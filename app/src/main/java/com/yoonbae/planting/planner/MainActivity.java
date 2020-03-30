@@ -24,9 +24,15 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         calendarView = findViewById(R.id.calendarView);
         calendarSetting();
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
-        //BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Intent intent;
+            switch (item.getItemId()) {
+                case R.id.action_list:
+                    intent = new Intent(MainActivity.this, ListActivity.class);
+                    startActivity(intent);
+                    break;
+            }
+
             return false;
         });
     }
