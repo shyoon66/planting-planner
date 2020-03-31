@@ -3,4 +3,6 @@
     <string name="setting">설정</string>
     <string name="calendar">캘린더</string>
     <string name="plant_list">식물목록</string>
+    <string name="plant_name">식물이름</string>
+    <string name="plant_description">식물에 대한 내용을 적어주세요</string>
 </resources>

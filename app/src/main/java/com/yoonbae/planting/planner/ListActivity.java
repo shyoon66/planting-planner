@@ -60,12 +60,16 @@ public class ListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
-            case android.R.id.home: {
-                Intent intent = new Intent(ListActivity.this, MainActivity.class);
+            case android.R.id.home:
+                intent = new Intent(ListActivity.this, MainActivity.class);
                 startActivity(intent);
                 break;
-            }
+            case R.id.action_insert:
+                intent = new Intent(ListActivity.this, InsertActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
