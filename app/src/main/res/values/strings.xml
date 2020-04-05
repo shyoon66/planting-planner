@@ -5,4 +5,39 @@
     <string name="plant_list">식물목록</string>
     <string name="plant_name">식물이름</string>
     <string name="plant_description">식물에 대한 내용을 적어주세요</string>
+    <string name="plant_picture">식물사진</string>
+    <string name="water_alarm_setting">물주기 알람 설정</string>
+    <string name="plant_date">우리 집에 온 날짜</string>
+    <string-array name="waterPeriod">
+        <item>매일</item>
+        <item>이틀</item>
+        <item>3일</item>
+        <item>4일</item>
+        <item>5일</item>
+        <item>6일</item>
+        <item>7일</item>
+        <item>8일</item>
+        <item>9일</item>
+        <item>10일</item>
+        <item>11일</item>
+        <item>12일</item>
+        <item>13일</item>
+        <item>14일</item>
+        <item>15일</item>
+        <item>16일</item>
+        <item>17일</item>
+        <item>18일</item>
+        <item>19일</item>
+        <item>20일</item>
+        <item>21일</item>
+        <item>22일</item>
+        <item>23일</item>
+        <item>24일</item>
+        <item>25일</item>
+        <item>26일</item>
+        <item>27일</item>
+        <item>28일</item>
+        <item>29일</item>
+        <item>30일</item>
+    </string-array>
 </resources>
