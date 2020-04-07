@@ -25,6 +25,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior {
     }
 
     //진행 중 스크롤이 갱신되어 타겟이 스크롤 되거나 스크롤 하려고 했을 때 호출됩니다.
+    @SuppressWarnings("deprecation")
     @Override
     public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull View child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
