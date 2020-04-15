@@ -9,6 +9,7 @@
     <string name="water_alarm_setting">물주기 알람 설정</string>
     <string name="plant_date">우리 집에 온 날짜</string>
     <string name="file_provider_authorities">com.yoonbae.planting.planner</string>
+    <string name="save">저장</string>
     <string-array name="waterPeriod">
         <item>매일</item>
         <item>이틀</item>
