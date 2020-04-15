@@ -22,6 +22,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.yoonbae.planting.planner.database.PlantDatabase;
 
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -53,6 +54,8 @@ public class InsertActivity extends AppCompatActivity {
             datePicker.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             datePickerDialog.show();
         });
+
+        PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
     }
 
     private void requestPermissions() {

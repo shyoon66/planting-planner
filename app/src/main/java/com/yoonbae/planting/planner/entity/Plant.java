@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(tableName = "PLANT")
 public class Plant {
 
     @PrimaryKey(autoGenerate = true)
