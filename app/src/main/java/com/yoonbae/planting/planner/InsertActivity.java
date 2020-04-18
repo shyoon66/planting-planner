@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,21 +20,27 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.textfield.TextInputLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.yoonbae.planting.planner.database.PlantDatabase;
+import com.yoonbae.planting.planner.entity.Plant;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
     private static final int REQUEST_ALBUM = 1;
     private ImageView imageView;
+    private Uri imageUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +64,14 @@ public class InsertActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
+        Button saveBtn = findViewById(R.id.saveBtn);
+        saveBtn.setOnClickListener(v -> {
+            Plant plant = getPlant();
+            if (!validate(plant)) {
+                return;
+            }
+            savePlant();
+        });
     }
 
     private void requestPermissions() {
@@ -124,6 +140,7 @@ public class InsertActivity extends AppCompatActivity {
     }
 
     private void setImage(Uri photoUri) {
+        imageUri = photoUri;
         Glide.with(this).load(photoUri).into(imageView);
     }
 
@@ -139,5 +156,44 @@ public class InsertActivity extends AppCompatActivity {
             return "0" + dayOfMonth;
         }
         return String.valueOf(dayOfMonth);
+    }
+
+    private Plant getPlant() {
+        Plant plant = new Plant();
+
+        plant.setImagePath(imageUri.getPath());
+
+        TextInputLayout plantNameLayOut = findViewById(R.id.plantName);
+        EditText plantNameEditText = plantNameLayOut.getEditText();
+        String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
+        plant.setName(plantName);
+
+        TextInputLayout plantDescLayOut = findViewById(R.id.plantDesc);
+        EditText plantDescEditText = plantDescLayOut.getEditText();
+        String plantDesc = Optional.of(plantDescEditText.getText().toString()).orElse("");
+        plant.setDesc(plantDesc);
+
+        TextView adoptionDateTextView = findViewById(R.id.adoptionDate);
+        String adoptionDate = adoptionDateTextView.getText().toString();
+        plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
+
+        Switch alarm = findViewById(R.id.alarm);
+        plant.setAlarm(alarm.isChecked());
+
+        TextView alarmDateTextView = findViewById(R.id.alarmDate);
+        TextView alarmTimeTextView = findViewById(R.id.alarmTime);
+        String alarmDate = alarmDateTextView.getText().toString();
+        String alarmTime = alarmTimeTextView.getText().toString();
+        LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        plant.setAlaramDateTime(alarmDateTime);
+        return plant;
+    }
+
+    private boolean validate(Plant plant) {
+        return false;
+    }
+
+    private void savePlant() {
+        PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
     }
 }

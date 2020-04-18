@@ -21,7 +21,7 @@ public class Plant {
     private LocalDate adoptionDate;
 
     @ColumnInfo(name = "ALARM_YN")
-    private boolean isAlarm;
+    private boolean alarm;
 
     private LocalDateTime alaramDateTime;
 
@@ -61,6 +61,14 @@ public class Plant {
         this.adoptionDate = adoptionDate;
     }
 
+    public boolean isAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(boolean alarm) {
+        this.alarm = alarm;
+    }
+
     public LocalDateTime getAlaramDateTime() {
         return alaramDateTime;
     }
@@ -93,6 +101,7 @@ public class Plant {
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
                 ", adoptionDate=" + adoptionDate +
+                ", alarm=" + alarm +
                 ", alaramDateTime=" + alaramDateTime +
                 ", alarmPeriod='" + alarmPeriod + '\'' +
                 ", imagePath='" + imagePath + '\'' +
