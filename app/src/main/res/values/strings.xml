@@ -11,8 +11,8 @@
     <string name="file_provider_authorities">com.yoonbae.planting.planner</string>
     <string name="save">저장</string>
     <string-array name="waterPeriod">
-        <item>매일</item>
-        <item>이틀</item>
+        <item>1일</item>
+        <item>2일</item>
         <item>3일</item>
         <item>4일</item>
         <item>5일</item>

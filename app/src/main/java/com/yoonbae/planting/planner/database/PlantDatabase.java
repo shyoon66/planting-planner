@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import com.yoonbae.planting.planner.dao.PlantDao;
 import com.yoonbae.planting.planner.entity.Plant;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Plant.class}, version = 1, exportSchema = false)
+@TypeConverters({Converters.class})
 public abstract class PlantDatabase extends RoomDatabase {
     public abstract PlantDao plantDao();
 

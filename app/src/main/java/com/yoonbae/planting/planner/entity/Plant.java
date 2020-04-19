@@ -25,7 +25,7 @@ public class Plant {
 
     private LocalDateTime alaramDateTime;
 
-    private String alarmPeriod;
+    private int alarmPeriod;
 
     private String imagePath;
 
@@ -77,11 +77,11 @@ public class Plant {
         this.alaramDateTime = alaramDateTime;
     }
 
-    public String getAlarmPeriod() {
+    public int getAlarmPeriod() {
         return alarmPeriod;
     }
 
-    public void setAlarmPeriod(String alarmPeriod) {
+    public void setAlarmPeriod(int alarmPeriod) {
         this.alarmPeriod = alarmPeriod;
     }
 
@@ -103,7 +103,7 @@ public class Plant {
                 ", adoptionDate=" + adoptionDate +
                 ", alarm=" + alarm +
                 ", alaramDateTime=" + alaramDateTime +
-                ", alarmPeriod='" + alarmPeriod + '\'' +
+                ", alarmPeriod=" + alarmPeriod +
                 ", imagePath='" + imagePath + '\'' +
                 '}';
     }

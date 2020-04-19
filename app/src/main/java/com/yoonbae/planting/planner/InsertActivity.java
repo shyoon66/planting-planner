@@ -2,16 +2,21 @@ package com.yoonbae.planting.planner;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +46,10 @@ public class InsertActivity extends AppCompatActivity {
     private static final int REQUEST_ALBUM = 1;
     private ImageView imageView;
     private Uri imageUri = null;
+    private TextView adoptionDate;
+    private TextView alarmDateTextView;
+    private TextView alarmTimeTextView;
+    private Spinner periodSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,24 +58,29 @@ public class InsertActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         imageView.setOnClickListener(v -> requestPermissions());
 
-        TextView adoptionDate = findViewById(R.id.adoptionDate);
-        adoptionDate.setOnClickListener(v -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(InsertActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
-                String monthStr = getMonthStr(monthOfYear + 1);
-                String dayStr = getDayStr(dayOfMonth);
-                String date = year + "-" + monthStr + "-" + dayStr;
-                adoptionDate.setText(date);
-            }, LocalDate.now().getYear(), LocalDate.now().getMonthValue() - 1, LocalDate.now().getDayOfMonth());
+        adoptionDate = findViewById(R.id.adoptionDate);
+        adoptionDate.setOnClickListener(v -> showDatePicker(adoptionDate));
 
-            DatePicker datePicker = datePickerDialog.getDatePicker();
-            datePicker.setMinDate(Calendar.getInstance().getTimeInMillis());
-            datePicker.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            datePickerDialog.show();
+        alarmDateTextView = findViewById(R.id.alarmDate);
+        alarmDateTextView.setOnClickListener(v -> showDatePicker(alarmDateTextView));
+
+        alarmTimeTextView = findViewById(R.id.alarmTime);
+        alarmTimeTextView.setOnClickListener(v -> showTimePicker());
+
+        periodSpinner = findViewById(R.id.periodSpinner);
+        periodSpinner.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            ((TextView) periodSpinner.getSelectedView()).setTextColor(Color.rgb(121, 121, 121));
+            ((TextView) periodSpinner.getSelectedView()).setTextSize(16);
+            (periodSpinner.getSelectedView()).setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.waterPeriod));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> {
             Plant plant = getPlant();
+            System.out.println(plant.toString());
             if (!validate(plant)) {
                 return;
             }
@@ -158,6 +172,45 @@ public class InsertActivity extends AppCompatActivity {
         return String.valueOf(dayOfMonth);
     }
 
+    private void showDatePicker(TextView dateView) {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(InsertActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
+            String monthStr = getMonthStr(monthOfYear + 1);
+            String dayStr = getDayStr(dayOfMonth);
+            String date = year + "-" + monthStr + "-" + dayStr;
+            dateView.setText(date);
+        }, LocalDate.now().getYear(), LocalDate.now().getMonthValue() - 1, LocalDate.now().getDayOfMonth());
+
+        DatePicker datePicker = datePickerDialog.getDatePicker();
+        datePicker.setMinDate(Calendar.getInstance().getTimeInMillis());
+        datePicker.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        datePickerDialog.show();
+    }
+
+    private void showTimePicker() {
+        int currentHour = LocalDateTime.now().getHour();
+        int currentMinute = LocalDateTime.now().getMinute();
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(InsertActivity.this, android.R.style.Widget_Material_ActionBar, (timePicker, selectedHourOfDay, selectedMinute) -> {
+            String hour = getDateStr(selectedHourOfDay);
+            String minute = getDateStr(selectedMinute);
+            String text = hour + ":" + minute;
+            alarmTimeTextView.setText(text);
+        }, currentHour, currentMinute, true);
+
+        Window window = timePickerDialog.getWindow();
+        if(window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            timePickerDialog.show();
+        }
+    }
+
+    private String getDateStr(int value) {
+        if (value < 10) {
+            return "0" + value;
+        }
+        return String.valueOf(value);
+    }
+
     private Plant getPlant() {
         Plant plant = new Plant();
 
@@ -180,12 +233,15 @@ public class InsertActivity extends AppCompatActivity {
         Switch alarm = findViewById(R.id.alarm);
         plant.setAlarm(alarm.isChecked());
 
-        TextView alarmDateTextView = findViewById(R.id.alarmDate);
         TextView alarmTimeTextView = findViewById(R.id.alarmTime);
         String alarmDate = alarmDateTextView.getText().toString();
         String alarmTime = alarmTimeTextView.getText().toString();
         LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         plant.setAlaramDateTime(alarmDateTime);
+
+        String periodStr = Optional.of(periodSpinner.getSelectedItem().toString()).orElse("0일");
+        int period = Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
+        plant.setAlarmPeriod(period);
         return plant;
     }
 
