@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.util.StringUtil;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
@@ -214,11 +215,14 @@ public class InsertActivity extends AppCompatActivity {
     private Plant getPlant() {
         Plant plant = new Plant();
 
-        plant.setImagePath(imageUri.getPath());
+        if (imageUri != null) {
+            plant.setImagePath(imageUri.getPath());
+        }
 
         TextInputLayout plantNameLayOut = findViewById(R.id.plantName);
         EditText plantNameEditText = plantNameLayOut.getEditText();
         String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
+        System.out.println("plantName = " + plantName);
         plant.setName(plantName);
 
         TextInputLayout plantDescLayOut = findViewById(R.id.plantDesc);
@@ -227,17 +231,21 @@ public class InsertActivity extends AppCompatActivity {
         plant.setDesc(plantDesc);
 
         TextView adoptionDateTextView = findViewById(R.id.adoptionDate);
-        String adoptionDate = adoptionDateTextView.getText().toString();
-        plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
+        String adoptionDate = Optional.of(adoptionDateTextView.getEditableText().toString()).orElse("");
+        if (!adoptionDate.equals("")) {
+            plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
+        }
 
         Switch alarm = findViewById(R.id.alarm);
         plant.setAlarm(alarm.isChecked());
 
         TextView alarmTimeTextView = findViewById(R.id.alarmTime);
-        String alarmDate = alarmDateTextView.getText().toString();
-        String alarmTime = alarmTimeTextView.getText().toString();
-        LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        plant.setAlaramDateTime(alarmDateTime);
+        String alarmDate = Optional.of(alarmDateTextView.getEditableText().toString()).orElse("");
+        String alarmTime = Optional.of(alarmTimeTextView.getEditableText().toString()).orElse("");
+        if (!alarmDate.equals("날짜를 선택해주세요.") && !alarmTime.equals("시간을 선택해주세요.")) {
+            LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            plant.setAlaramDateTime(alarmDateTime);
+        }
 
         String periodStr = Optional.of(periodSpinner.getSelectedItem().toString()).orElse("0일");
         int period = Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
@@ -246,7 +254,34 @@ public class InsertActivity extends AppCompatActivity {
     }
 
     private boolean validate(Plant plant) {
-        return false;
+        String plantName = plant.getName();
+        if (plantName == null || plantName.equals("")) {
+            Toast.makeText(getApplicationContext(), "식물 이름은 필수 입력입니다.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String imagePath = plant.getImagePath();
+        if (imagePath == null || imagePath.equals("")) {
+            Toast.makeText(getApplicationContext(), "식물 사진은 필수 입력입니다.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        boolean alarm = plant.isAlarm();
+        if (alarm) {
+            LocalDateTime alarmDateTime = plant.getAlaramDateTime();
+            if (alarmDateTime == null) {
+                Toast.makeText(getApplicationContext(), "알람시작일과 알람 시각은 필수 입력입니다.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            int alarmPeriod = plant.getAlarmPeriod();
+            if (alarmPeriod == 0) {
+                Toast.makeText(getApplicationContext(), "알람주기는 필수 입력입니다.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void savePlant() {
