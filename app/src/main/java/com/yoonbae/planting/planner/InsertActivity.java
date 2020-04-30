@@ -1,6 +1,5 @@
 package com.yoonbae.planting.planner;
 
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -27,21 +26,21 @@ import androidx.room.Transaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.yoonbae.planting.planner.dao.PlantDao;
-import com.yoonbae.planting.planner.database.PlantDatabase;
-import com.yoonbae.planting.planner.entity.Plant;
+import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.data.PlantDao;
+import com.yoonbae.planting.planner.data.PlantDatabase;
+import com.yoonbae.planting.planner.util.PermissionType;
+import com.yoonbae.planting.planner.util.PermissionUtils;
+import com.yoonbae.planting.planner.validator.PlantValidator;
+import com.yoonbae.planting.planner.validator.Validator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Optional;
+
+import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
@@ -58,7 +57,14 @@ public class InsertActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
         imageView = findViewById(R.id.imageView);
-        imageView.setOnClickListener(v -> requestPermissions());
+        imageView.setOnClickListener(v -> {
+            PermissionType permissionType = PermissionUtils.request(this);
+            if (permissionType == PermissionType.GRANTED) {
+                openAlbum();
+            } else if (permissionType == PermissionType.DENIED) {
+                showSettingsDialog();
+            }
+        });
 
         adoptionDate = findViewById(R.id.adoptionDate);
         adoptionDate.setOnClickListener(v -> showDatePicker(adoptionDate));
@@ -82,37 +88,14 @@ public class InsertActivity extends AppCompatActivity {
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> {
             Plant plant = getPlant();
-            System.out.println(plant.toString());
-            if (!validate(plant)) {
+            Validator validator = new PlantValidator();
+            String validationMessage = validator.validate(plant);
+            if (!validationMessage.equals("")) {
+                Toast.makeText(getApplicationContext(), validator.validate(plant), Toast.LENGTH_LONG).show();
                 return;
             }
             savePlant(plant);
         });
-    }
-
-    private void requestPermissions() {
-        Dexter.withActivity(InsertActivity.this)
-                .withPermissions(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            openAlbum();
-                        } else if (report.isAnyPermissionPermanentlyDenied()) {
-                            showSettingsDialog();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                })
-                .withErrorListener(error -> Toast.makeText(getApplicationContext(), "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show())
-                .check();
     }
 
     private void openAlbum() {
@@ -192,7 +175,7 @@ public class InsertActivity extends AppCompatActivity {
         int currentHour = LocalDateTime.now().getHour();
         int currentMinute = LocalDateTime.now().getMinute();
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(InsertActivity.this, android.R.style.Widget_Material_ActionBar, (timePicker, selectedHourOfDay, selectedMinute) -> {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(InsertActivity.this, (timePicker, selectedHourOfDay, selectedMinute) -> {
             String hour = getDateStr(selectedHourOfDay);
             String minute = getDateStr(selectedMinute);
             String text = hour + ":" + minute;
@@ -201,7 +184,6 @@ public class InsertActivity extends AppCompatActivity {
 
         Window window = timePickerDialog.getWindow();
         if(window != null) {
-            window.setBackgroundDrawableResource(android.R.color.transparent);
             timePickerDialog.show();
         }
     }
@@ -254,45 +236,12 @@ public class InsertActivity extends AppCompatActivity {
         return plant;
     }
 
-    private boolean validate(Plant plant) {
-        String plantName = plant.getName();
-        if (plantName == null || plantName.equals("")) {
-            Toast.makeText(getApplicationContext(), "식물 이름은 필수 입력입니다.", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        String imagePath = plant.getImagePath();
-        if (imagePath == null || imagePath.equals("")) {
-            Toast.makeText(getApplicationContext(), "식물 사진은 필수 입력입니다.", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        boolean alarm = plant.isAlarm();
-        if (alarm) {
-            LocalDateTime alarmDateTime = plant.getAlaramDateTime();
-            if (alarmDateTime == null) {
-                Toast.makeText(getApplicationContext(), "알람시작일과 알람 시각은 필수 입력입니다.", Toast.LENGTH_LONG).show();
-                return false;
-            }
-
-            int alarmPeriod = plant.getAlarmPeriod();
-            if (alarmPeriod == 0) {
-                Toast.makeText(getApplicationContext(), "알람주기는 필수 입력입니다.", Toast.LENGTH_LONG).show();
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     @Transaction
     public void savePlant(Plant plant) {
-        new Thread() {
-            public void run() {
-                PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
-                PlantDao plantDao = database.plantDao();
-                plantDao.insert(plant);
-            }
-        }.start();
+        databaseWriteExecutor.execute(() -> {
+            PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
+            PlantDao plantDao = plantDatabase.plantDao();
+            plantDao.insert(plant);
+        });
     }
 }

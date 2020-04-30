@@ -1,4 +1,4 @@
-package com.yoonbae.planting.planner.entity;
+package com.yoonbae.planting.planner.data;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

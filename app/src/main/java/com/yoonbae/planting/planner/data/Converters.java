@@ -1,4 +1,4 @@
-package com.yoonbae.planting.planner.database;
+package com.yoonbae.planting.planner.data;
 
 import androidx.room.TypeConverter;
 
