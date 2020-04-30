@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.util.StringUtil;
+import androidx.room.Transaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
@@ -32,6 +32,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.yoonbae.planting.planner.dao.PlantDao;
 import com.yoonbae.planting.planner.database.PlantDatabase;
 import com.yoonbae.planting.planner.entity.Plant;
 
@@ -85,7 +86,7 @@ public class InsertActivity extends AppCompatActivity {
             if (!validate(plant)) {
                 return;
             }
-            savePlant();
+            savePlant(plant);
         });
     }
 
@@ -284,7 +285,14 @@ public class InsertActivity extends AppCompatActivity {
         return true;
     }
 
-    private void savePlant() {
-        PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
+    @Transaction
+    public void savePlant(Plant plant) {
+        new Thread() {
+            public void run() {
+                PlantDatabase database = PlantDatabase.getDatabase(InsertActivity.this);
+                PlantDao plantDao = database.plantDao();
+                plantDao.insert(plant);
+            }
+        }.start();
     }
 }
