@@ -51,6 +51,7 @@ public class InsertActivity extends AppCompatActivity {
     private TextView alarmDateTextView;
     private TextView alarmTimeTextView;
     private Spinner periodSpinner;
+    private Switch alarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,15 @@ public class InsertActivity extends AppCompatActivity {
 
         adoptionDate = findViewById(R.id.adoptionDate);
         adoptionDate.setOnClickListener(v -> showDatePicker(adoptionDate));
+
+        alarm = findViewById(R.id.alarm);
+        alarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                setEnableAlarmItems(true);
+            } else {
+                setEnableAlarmItems(false);
+            }
+        });
 
         alarmDateTextView = findViewById(R.id.alarmDate);
         alarmDateTextView.setOnClickListener(v -> showDatePicker(alarmDateTextView));
@@ -96,6 +106,12 @@ public class InsertActivity extends AppCompatActivity {
             }
             savePlant(plant);
         });
+    }
+
+    private void setEnableAlarmItems(boolean b) {
+        alarmDateTextView.setEnabled(b);
+        alarmTimeTextView.setEnabled(b);
+        periodSpinner.setEnabled(b);
     }
 
     private void openAlbum() {
@@ -205,7 +221,6 @@ public class InsertActivity extends AppCompatActivity {
         TextInputLayout plantNameLayOut = findViewById(R.id.plantName);
         EditText plantNameEditText = plantNameLayOut.getEditText();
         String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
-        System.out.println("plantName = " + plantName);
         plant.setName(plantName);
 
         TextInputLayout plantDescLayOut = findViewById(R.id.plantDesc);
@@ -215,24 +230,27 @@ public class InsertActivity extends AppCompatActivity {
 
         TextView adoptionDateTextView = findViewById(R.id.adoptionDate);
         String adoptionDate = Optional.of(adoptionDateTextView.getEditableText().toString()).orElse("");
-        if (!adoptionDate.equals("")) {
+        if (!adoptionDate.equals("날짜를 선택해주세요.")) {
             plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
         }
 
-        Switch alarm = findViewById(R.id.alarm);
         plant.setAlarm(alarm.isChecked());
+        if (plant.isAlarm()) {
+            String alarmDate = Optional.of(alarmDateTextView.getEditableText().toString()).orElse("");
+            String alarmTime = Optional.of(alarmTimeTextView.getEditableText().toString()).orElse("");
+            if (!alarmDate.equals("날짜를 선택해주세요.") && !alarmTime.equals("시간을 선택해주세요.")) {
+                LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                plant.setAlaramDateTime(alarmDateTime);
+            }
 
-        TextView alarmTimeTextView = findViewById(R.id.alarmTime);
-        String alarmDate = Optional.of(alarmDateTextView.getEditableText().toString()).orElse("");
-        String alarmTime = Optional.of(alarmTimeTextView.getEditableText().toString()).orElse("");
-        if (!alarmDate.equals("날짜를 선택해주세요.") && !alarmTime.equals("시간을 선택해주세요.")) {
-            LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            plant.setAlaramDateTime(alarmDateTime);
+            String periodStr = Optional.of(periodSpinner.getSelectedItem().toString()).orElse("0일");
+            int period = Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
+            plant.setAlarmPeriod(period);
+        } else {
+            plant.setAlaramDateTime(null);
+            plant.setAlarmPeriod(0);
         }
 
-        String periodStr = Optional.of(periodSpinner.getSelectedItem().toString()).orElse("0일");
-        int period = Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
-        plant.setAlarmPeriod(period);
         return plant;
     }
 

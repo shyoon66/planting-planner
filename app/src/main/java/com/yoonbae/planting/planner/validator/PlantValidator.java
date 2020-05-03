@@ -8,14 +8,15 @@ public class PlantValidator implements Validator {
     @Override
     public <T> String validate(T object) {
         Plant plant = (Plant) object;
-        String plantName = plant.getName();
-        if (plantName == null || plantName.equals("")) {
-            return "식물 이름은 필수 입력입니다.";
-        }
 
         String imagePath = plant.getImagePath();
         if (imagePath == null || imagePath.equals("")) {
             return "식물 사진은 필수 입력입니다.";
+        }
+
+        String plantName = plant.getName();
+        if (plantName == null || plantName.equals("")) {
+            return "식물 이름은 필수 입력입니다.";
         }
 
         boolean alarm = plant.isAlarm();
