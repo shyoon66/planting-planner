@@ -9,9 +9,20 @@ import android.view.MenuItem;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.yoonbae.planting.planner.adapter.MyRecyclerViewAdapter;
+import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.data.PlantDao;
+import com.yoonbae.planting.planner.data.PlantDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -48,6 +59,16 @@ public class ListActivity extends AppCompatActivity {
             }
 
             return false;
+        });
+
+        PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
+        PlantDao plantDao = plantDatabase.plantDao();
+
+        plantDao.findAll().observe(this, plants -> {
+            recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
+            MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);
+            recyclerView.setAdapter(myRecyclerViewAdapter);
+            myRecyclerViewAdapter.notifyDataSetChanged();
         });
     }
 

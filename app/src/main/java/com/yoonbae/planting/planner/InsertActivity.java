@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Transaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
@@ -254,12 +253,13 @@ public class InsertActivity extends AppCompatActivity {
         return plant;
     }
 
-    @Transaction
     public void savePlant(Plant plant) {
         databaseWriteExecutor.execute(() -> {
-            PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
+            PlantDatabase plantDatabase = PlantDatabase.getDatabase(InsertActivity.this);
             PlantDao plantDao = plantDatabase.plantDao();
             plantDao.insert(plant);
+            Intent intent = new Intent(InsertActivity.this, ListActivity.class);
+            startActivity(intent);
         });
     }
 }

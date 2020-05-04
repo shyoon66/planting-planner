@@ -1,5 +1,6 @@
 package com.yoonbae.planting.planner.data;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -20,9 +21,9 @@ public interface PlantDao {
     @Delete
     void delete(Plant plant);
 
-    @Query("SELECT * FROM Plant p WHERE p.id = :id LIMIT 1")
-    Plant findById(Long id);
+    @Query("SELECT * FROM PLANT p WHERE p.id = :id LIMIT 1")
+    LiveData<Plant> findById(Long id);
 
-    @Query("SELECT * FROM Plant p")
-    List<Plant> findAll();
+    @Query("SELECT * FROM PLANT")
+    LiveData<List<Plant>> findAll();
 }
