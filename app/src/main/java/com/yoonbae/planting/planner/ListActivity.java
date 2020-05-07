@@ -14,15 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yoonbae.planting.planner.adapter.MyRecyclerViewAdapter;
-import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class ListActivity extends AppCompatActivity {
 
