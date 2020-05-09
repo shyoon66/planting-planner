@@ -56,7 +56,6 @@ public class ListActivity extends AppCompatActivity {
 
         PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
         PlantDao plantDao = plantDatabase.plantDao();
-
         plantDao.findAll().observe(this, plants -> {
             recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
             MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);

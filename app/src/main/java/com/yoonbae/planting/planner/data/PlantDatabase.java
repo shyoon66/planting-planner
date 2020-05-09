@@ -13,12 +13,12 @@ import java.util.concurrent.Executors;
 @Database(entities = {Plant.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class PlantDatabase extends RoomDatabase {
-    public abstract PlantDao plantDao();
-
     public static volatile PlantDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
+    public abstract PlantDao plantDao();
 
     public static PlantDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

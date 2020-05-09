@@ -2,7 +2,6 @@ package com.yoonbae.planting.planner.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.net.CaptivePortal;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.yoonbae.planting.planner.R;
 import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.data.PlantDao;
+import com.yoonbae.planting.planner.data.PlantDatabase;
 import com.yoonbae.planting.planner.util.PlannerUtils;
 
 import java.io.File;
 import java.util.List;
+
+import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Plant> plantList;
@@ -42,7 +45,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         final Plant plant = plantList.get(position);
         ((RowCell) holder).name.setText(plant.getName());
-        Uri imageUri = Uri.parse(new File(plant.getImagePath()).toString());
+        Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
         Glide.with(((RowCell) holder).imageView.getContext()).load(imageUri).into(((RowCell) holder).imageView);
 
         ((RowCell) holder).imageView.setOnClickListener(view -> {
@@ -59,7 +62,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 if (index == 0) {
 
                 } else if (index == 1) {
-                    deletePlant(position);
+                    deletePlant(plant);
                 }
 
                 dialog.dismiss();
@@ -87,24 +90,28 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private void deletePlant(final int position) {
+    private void deletePlant(Plant plant) {
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
-        String name = plantList.get(position).getName();
+        String name = plant.getName();
         ab.setTitle(name + "을(를) 삭제하시겠습니까?");
         String[] items = {"예", "아니오"};
 
         // 목록 클릭시 설정
         ab.setItems(items, (dialog, index) -> {
-            if(index == 0)
-                deletePlantProcess(position);
-
+            if(index == 0) {
+                deletePlantProcess(plant);
+            }
             dialog.dismiss();
         });
 
         ab.show();
     }
 
-    private void deletePlantProcess(final int position) {
-
+    private void deletePlantProcess(Plant plant) {
+        databaseWriteExecutor.execute(() -> {
+            PlantDatabase plantDatabase = PlantDatabase.getDatabase(context);
+            PlantDao plantDao = plantDatabase.plantDao();
+            plantDao.delete(plant);
+        });
     }
 }

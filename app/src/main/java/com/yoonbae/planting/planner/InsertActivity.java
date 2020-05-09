@@ -30,9 +30,11 @@ import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
 import com.yoonbae.planting.planner.util.PermissionType;
 import com.yoonbae.planting.planner.util.PermissionUtils;
+import com.yoonbae.planting.planner.util.PlannerUtils;
 import com.yoonbae.planting.planner.validator.PlantValidator;
 import com.yoonbae.planting.planner.validator.Validator;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -96,7 +98,13 @@ public class InsertActivity extends AppCompatActivity {
 
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> {
-            Plant plant = getPlant();
+            Plant plant;
+            try {
+                plant = getPlant();
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "이미지 파일을 가져오는데 실패했습니다.", Toast.LENGTH_LONG).show();
+                return;
+            }
             Validator validator = new PlantValidator();
             String validationMessage = validator.validate(plant);
             if (!validationMessage.equals("")) {
@@ -210,11 +218,11 @@ public class InsertActivity extends AppCompatActivity {
         return String.valueOf(value);
     }
 
-    private Plant getPlant() {
+    private Plant getPlant() throws IOException {
         Plant plant = new Plant();
 
         if (imageUri != null) {
-            plant.setImagePath(imageUri.getPath());
+            plant.setImagePath(PlannerUtils.getFilePathFromURI(getApplicationContext(), imageUri));
         }
 
         TextInputLayout plantNameLayOut = findViewById(R.id.plantName);
