@@ -64,10 +64,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 } else if (index == 1) {
                     deletePlant(plant);
                 }
-
                 dialog.dismiss();
             });
-
             ab.show();
         });
     }
