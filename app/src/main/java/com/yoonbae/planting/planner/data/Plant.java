@@ -1,15 +1,19 @@
 package com.yoonbae.planting.planner.data;
 
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity(tableName = "PLANT")
-public class Plant {
+@SuppressWarnings("serial")
+public class Plant implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id;

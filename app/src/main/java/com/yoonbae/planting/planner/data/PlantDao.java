@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Dao
@@ -26,4 +27,7 @@ public interface PlantDao {
 
     @Query("SELECT * FROM PLANT")
     LiveData<List<Plant>> findAll();
+
+    @Query("SELECT * FROM PLANT p WHERE p.id = :id AND p.adoptionDate = :adoptionDate")
+    LiveData<Plant> findByIdwithDate(Long id, LocalDate adoptionDate);
 }

@@ -33,6 +33,7 @@
         </activity>
         <activity android:name=".ListActivity" />
         <activity android:name=".InsertActivity" />
+        <activity android:name=".ModifyActivity"/>
     </application>
 
 </manifest>

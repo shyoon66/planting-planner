@@ -46,18 +46,40 @@ import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecu
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
     private static final int REQUEST_ALBUM = 1;
-    private ImageView imageView;
-    private Uri imageUri = null;
+    protected ImageView imageView;
+    protected Uri imageUri = null;
     private TextView adoptionDate;
-    private TextView alarmDateTextView;
-    private TextView alarmTimeTextView;
-    private Spinner periodSpinner;
+    protected TextView alarmDateTextView;
+    protected TextView alarmTimeTextView;
+    protected Spinner periodSpinner;
     private Switch alarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
+        init();
+
+        Button saveBtn = findViewById(R.id.saveBtn);
+        saveBtn.setOnClickListener(v -> {
+            Plant plant;
+            try {
+                plant = getPlant();
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "이미지 파일을 가져오는데 실패했습니다.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Validator validator = new PlantValidator();
+            String validationMessage = validator.validate(plant);
+            if (!validationMessage.equals("")) {
+                Toast.makeText(getApplicationContext(), validator.validate(plant), Toast.LENGTH_LONG).show();
+                return;
+            }
+            savePlant(plant);
+        });
+    }
+
+    protected void init(){
         imageView = findViewById(R.id.imageView);
         imageView.setOnClickListener(v -> {
             PermissionType permissionType = PermissionUtils.request(this);
@@ -95,27 +117,9 @@ public class InsertActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.waterPeriod));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        Button saveBtn = findViewById(R.id.saveBtn);
-        saveBtn.setOnClickListener(v -> {
-            Plant plant;
-            try {
-                plant = getPlant();
-            } catch (IOException e) {
-                Toast.makeText(getApplicationContext(), "이미지 파일을 가져오는데 실패했습니다.", Toast.LENGTH_LONG).show();
-                return;
-            }
-            Validator validator = new PlantValidator();
-            String validationMessage = validator.validate(plant);
-            if (!validationMessage.equals("")) {
-                Toast.makeText(getApplicationContext(), validator.validate(plant), Toast.LENGTH_LONG).show();
-                return;
-            }
-            savePlant(plant);
-        });
     }
 
-    private void setEnableAlarmItems(boolean b) {
+    protected void setEnableAlarmItems(boolean b) {
         alarmDateTextView.setEnabled(b);
         alarmTimeTextView.setEnabled(b);
         periodSpinner.setEnabled(b);
@@ -218,7 +222,7 @@ public class InsertActivity extends AppCompatActivity {
         return String.valueOf(value);
     }
 
-    private Plant getPlant() throws IOException {
+    protected Plant getPlant() throws IOException {
         Plant plant = new Plant();
 
         if (imageUri != null) {
@@ -270,4 +274,5 @@ public class InsertActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
+
 }
