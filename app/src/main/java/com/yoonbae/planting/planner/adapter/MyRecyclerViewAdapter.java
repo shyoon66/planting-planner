@@ -2,7 +2,9 @@ package com.yoonbae.planting.planner.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.yoonbae.planting.planner.ModifyActivity;
 import com.yoonbae.planting.planner.R;
 import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
-import com.yoonbae.planting.planner.util.PlannerUtils;
 
 import java.io.File;
 import java.util.List;
@@ -60,7 +62,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             // 목록 클릭시 설정
             ab.setItems(items, (dialog, index) -> {
                 if (index == 0) {
-
+                    editPlant(plant);
                 } else if (index == 1) {
                     deletePlant(plant);
                 }
@@ -90,6 +92,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
+
+    private void editPlant(Plant plant){
+        Intent intent = new Intent(context, ModifyActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("plant", plant);
+        intent.putExtras(bundle);
+
+        context.startActivity(intent);
+    }
+
+
+
     private void deletePlant(Plant plant) {
         AlertDialog.Builder ab = new AlertDialog.Builder(context);
         String name = plant.getName();
@@ -106,6 +121,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         ab.show();
     }
+
+
 
     private void deletePlantProcess(Plant plant) {
         databaseWriteExecutor.execute(() -> {
