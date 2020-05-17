@@ -10,6 +10,7 @@
     <string name="plant_date">우리 집에 온 날짜</string>
     <string name="file_provider_authorities">com.yoonbae.planting.planner</string>
     <string name="save">저장</string>
+    <string name="list">목록</string>
     <string-array name="waterPeriod">
         <item>1일</item>
         <item>2일</item>

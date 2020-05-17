@@ -17,48 +17,64 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginTop="16dp"
-            android:background="#4CAF50"
             android:contentDescription="@string/plant_picture"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/plantName"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/plantName"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/plantNameTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:text="이름"
+            android:textColor="#797979"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/plantName"
+            android:layout_width="200dp"
+            android:layout_height="21dp"
+            android:layout_marginStart="165dp"
             android:layout_marginTop="16dp"
             android:hint="@string/plant_name"
-            app:endIconMode="clear_text"
+            android:textColor="#797979"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
+            app:layout_constraintStart_toEndOf="@+id/plantNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/plantDesc"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/plantDescTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:hint="@string/plant_description"
-            app:endIconMode="clear_text"
+            android:layout_marginEnd="32dp"
+            android:text="종류"
+            android:textColor="#797979"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plantName">
+            app:layout_constraintTop_toBottomOf="@+id/plantName" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="87dp"
-                android:maxLines="3"
-                android:minLines="3" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/plantDesc"
+            android:layout_width="200dp"
+            android:layout_height="21dp"
+            android:layout_marginStart="165dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/plant_description"
+            android:maxLines="3"
+            android:textColor="#797979"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/plantDescTextView"
+            app:layout_constraintTop_toBottomOf="@+id/plantName" />
 
         <TextView
             android:id="@+id/dateView"
@@ -169,29 +185,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textAlarmTime" />
 
-        <Spinner
+        <TextView
             android:id="@+id/periodSpinner"
-            android:layout_width="200dp"
+            android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="133dp"
             android:layout_marginTop="16dp"
-            android:entries="@array/waterPeriod"
-            android:overlapAnchor="false"
-            android:spinnerMode="dropdown"
-            android:textColor="#797979"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textAlarmPeriod"
             app:layout_constraintTop_toBottomOf="@+id/alarmTime" />
 
         <Button
-            android:id="@+id/saveBtn"
+            android:id="@+id/listBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="159dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="164dp"
             android:layout_marginBottom="32dp"
-            android:text="@string/save"
+            android:text="@string/list"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

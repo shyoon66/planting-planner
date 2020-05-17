@@ -2,6 +2,7 @@ package com.yoonbae.planting.planner.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.yoonbae.planting.planner.R;
+import com.yoonbae.planting.planner.ViewActivity;
 import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
-import com.yoonbae.planting.planner.util.PlannerUtils;
 
 import java.io.File;
 import java.util.List;
@@ -49,7 +50,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         Glide.with(((RowCell) holder).imageView.getContext()).load(imageUri).into(((RowCell) holder).imageView);
 
         ((RowCell) holder).imageView.setOnClickListener(view -> {
-
+            Intent intent = new Intent(context, ViewActivity.class);
+            intent.putExtra("id", plant.getId());
+            context.startActivity(intent);
         });
 
         ((RowCell) holder).imageButton.setOnClickListener(view -> {
