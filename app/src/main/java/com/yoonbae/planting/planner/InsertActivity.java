@@ -34,6 +34,7 @@ import com.yoonbae.planting.planner.util.PlannerUtils;
 import com.yoonbae.planting.planner.validator.PlantValidator;
 import com.yoonbae.planting.planner.validator.Validator;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +48,8 @@ public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
     private static final int REQUEST_ALBUM = 1;
     private ImageView imageView;
+    private TextInputLayout plantNameLayOut;
+    private TextInputLayout plantDescLayOut;
     private Uri imageUri = null;
     private TextView adoptionDate;
     private TextView alarmDateTextView;
@@ -58,7 +61,23 @@ public class InsertActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
+        componentSetting();
+        eventSetting();
+        setPlant();
+    }
+
+    private void componentSetting() {
         imageView = findViewById(R.id.imageView);
+        plantNameLayOut = findViewById(R.id.plantName);
+        plantDescLayOut = findViewById(R.id.plantDesc);
+        adoptionDate = findViewById(R.id.adoptionDate);
+        alarm = findViewById(R.id.alarm);
+        alarmDateTextView = findViewById(R.id.alarmDate);
+        alarmTimeTextView = findViewById(R.id.alarmTime);
+        periodSpinner = findViewById(R.id.periodSpinner);
+    }
+
+    private void eventSetting() {
         imageView.setOnClickListener(v -> {
             PermissionType permissionType = PermissionUtils.request(this);
             if (permissionType == PermissionType.GRANTED) {
@@ -68,10 +87,7 @@ public class InsertActivity extends AppCompatActivity {
             }
         });
 
-        adoptionDate = findViewById(R.id.adoptionDate);
         adoptionDate.setOnClickListener(v -> showDatePicker(adoptionDate));
-
-        alarm = findViewById(R.id.alarm);
         alarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 setEnableAlarmItems(true);
@@ -80,13 +96,8 @@ public class InsertActivity extends AppCompatActivity {
             }
         });
 
-        alarmDateTextView = findViewById(R.id.alarmDate);
         alarmDateTextView.setOnClickListener(v -> showDatePicker(alarmDateTextView));
-
-        alarmTimeTextView = findViewById(R.id.alarmTime);
         alarmTimeTextView.setOnClickListener(v -> showTimePicker());
-
-        periodSpinner = findViewById(R.id.periodSpinner);
         periodSpinner.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             ((TextView) periodSpinner.getSelectedView()).setTextColor(Color.rgb(121, 121, 121));
             ((TextView) periodSpinner.getSelectedView()).setTextSize(16);
@@ -113,6 +124,33 @@ public class InsertActivity extends AppCompatActivity {
             }
             savePlant(plant);
         });
+    }
+
+    private void setPlant() {
+        Intent intent = getIntent();
+        long id = getPlantId(intent);
+        if (id == 0) {
+            return;
+        }
+        PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
+        PlantDao plantDao = plantDatabase.plantDao();
+        plantDao.findById(id).observe(this, plant -> {
+            Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
+            Glide.with(this).load(imageUri).into(imageView);
+
+            EditText plantNameEditText = plantNameLayOut.getEditText();
+            plantNameEditText.setText(plant.getName());
+
+            EditText plantDescEditText = plantDescLayOut.getEditText();
+            plantDescEditText.setText(plant.getDesc());
+
+            LocalDate plantAdoptionDate = plant.getAdoptionDate();
+            adoptionDate.setText(plantAdoptionDate.format(DateTimeFormatter.ISO_DATE));
+        });
+    }
+
+    private long getPlantId(Intent intent) {
+        return intent.getLongExtra("id", 0);
     }
 
     private void setEnableAlarmItems(boolean b) {
@@ -225,12 +263,10 @@ public class InsertActivity extends AppCompatActivity {
             plant.setImagePath(PlannerUtils.getFilePathFromURI(getApplicationContext(), imageUri));
         }
 
-        TextInputLayout plantNameLayOut = findViewById(R.id.plantName);
         EditText plantNameEditText = plantNameLayOut.getEditText();
         String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
         plant.setName(plantName);
 
-        TextInputLayout plantDescLayOut = findViewById(R.id.plantDesc);
         EditText plantDescEditText = plantDescLayOut.getEditText();
         String plantDesc = Optional.of(plantDescEditText.getText().toString()).orElse("");
         plant.setDesc(plantDesc);

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.yoonbae.planting.planner.InsertActivity;
 import com.yoonbae.planting.planner.R;
 import com.yoonbae.planting.planner.ViewActivity;
 import com.yoonbae.planting.planner.data.Plant;
@@ -29,10 +30,13 @@ import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecu
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Plant> plantList;
     private Context context;
+    private PlantDao plantDao;
 
     public MyRecyclerViewAdapter(List<Plant> plantList, Context context) {
         this.plantList = plantList;
         this.context = context;
+        PlantDatabase plantDatabase = PlantDatabase.getDatabase(context);
+        plantDao = plantDatabase.plantDao();
     }
 
     @NonNull
@@ -63,7 +67,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             // 목록 클릭시 설정
             ab.setItems(items, (dialog, index) -> {
                 if (index == 0) {
-
+                    updatePlant(plant.getId());
                 } else if (index == 1) {
                     deletePlant(plant);
                 }
@@ -71,6 +75,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             });
             ab.show();
         });
+    }
+
+    private void updatePlant(Long id) {
+        Intent intent = new Intent(context, InsertActivity.class);
+        intent.putExtra("id", id);
+        context.startActivity(intent);
     }
 
     @Override
@@ -109,10 +119,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     private void deletePlantProcess(Plant plant) {
-        databaseWriteExecutor.execute(() -> {
-            PlantDatabase plantDatabase = PlantDatabase.getDatabase(context);
-            PlantDao plantDao = plantDatabase.plantDao();
-            plantDao.delete(plant);
-        });
+        databaseWriteExecutor.execute(() -> plantDao.delete(plant));
     }
 }
