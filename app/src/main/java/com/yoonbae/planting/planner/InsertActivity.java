@@ -3,6 +3,7 @@ package com.yoonbae.planting.planner;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,12 +62,12 @@ public class InsertActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
-        componentSetting();
-        eventSetting();
-        setPlant();
+        initComponent();
+        initEvent();
+        initPlant();
     }
 
-    private void componentSetting() {
+    private void initComponent() {
         imageView = findViewById(R.id.imageView);
         plantNameLayOut = findViewById(R.id.plantName);
         plantDescLayOut = findViewById(R.id.plantDesc);
@@ -77,7 +78,7 @@ public class InsertActivity extends AppCompatActivity {
         periodSpinner = findViewById(R.id.periodSpinner);
     }
 
-    private void eventSetting() {
+    private void initEvent() {
         imageView.setOnClickListener(v -> {
             PermissionType permissionType = PermissionUtils.request(this);
             if (permissionType == PermissionType.GRANTED) {
@@ -126,7 +127,7 @@ public class InsertActivity extends AppCompatActivity {
         });
     }
 
-    private void setPlant() {
+    private void initPlant() {
         Intent intent = getIntent();
         long id = getPlantId(intent);
         if (id == 0) {
@@ -146,6 +147,22 @@ public class InsertActivity extends AppCompatActivity {
 
             LocalDate plantAdoptionDate = plant.getAdoptionDate();
             adoptionDate.setText(plantAdoptionDate.format(DateTimeFormatter.ISO_DATE));
+
+            alarm.setChecked(plant.isAlarm());
+
+            String alarmStartDt = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            alarmDateTextView.setText(alarmStartDt);
+
+            String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+            alarmTimeTextView.setText(alarmTime);
+
+            Resources res = getResources();
+            String[] waterPeriodArr = res.getStringArray(R.array.waterPeriod);
+            String alarmPeriod = String.valueOf(plant.getAlarmPeriod());
+            for(int i = 0; i < waterPeriodArr.length; i++) {
+                if(waterPeriodArr[i].equals(alarmPeriod))
+                    periodSpinner.setSelection(i);
+            }
         });
     }
 
