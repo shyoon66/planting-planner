@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
+import com.yoonbae.planting.planner.alarm.AlarmService;
 import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
@@ -123,7 +124,7 @@ public class InsertActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), validator.validate(plant), Toast.LENGTH_LONG).show();
                 return;
             }
-            savePlant(plant);
+            savePlantAndSetWaterAlarm(plant);
         });
     }
 
@@ -140,9 +141,11 @@ public class InsertActivity extends AppCompatActivity {
             Glide.with(this).load(imageUri).into(imageView);
 
             EditText plantNameEditText = plantNameLayOut.getEditText();
+            assert plantNameEditText != null;
             plantNameEditText.setText(plant.getName());
 
             EditText plantDescEditText = plantDescLayOut.getEditText();
+            assert plantDescEditText != null;
             plantDescEditText.setText(plant.getDesc());
 
             LocalDate plantAdoptionDate = plant.getAdoptionDate();
@@ -314,13 +317,46 @@ public class InsertActivity extends AppCompatActivity {
         return plant;
     }
 
-    public void savePlant(Plant plant) {
+    public void savePlantAndSetWaterAlarm(Plant plant) {
         databaseWriteExecutor.execute(() -> {
             PlantDatabase plantDatabase = PlantDatabase.getDatabase(InsertActivity.this);
             PlantDao plantDao = plantDatabase.plantDao();
             plantDao.insert(plant);
+            setWaterAlarm(plant);
             Intent intent = new Intent(InsertActivity.this, ListActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void setWaterAlarm(Plant plant) {
+        AlarmService.INSTANCE.cancelAlarm(getApplicationContext(), plant.getId().intValue());
+        if (plant.isAlarm()) {
+            String alarmDate = plant.getAlaramDateTime().format(DateTimeFormatter.ISO_DATE);
+            String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+            long alarmTimeInMillis = getAlarmTimeInMillis(alarmDate, alarmTime, plant.getAlarmPeriod());
+            long intervalMillis = plant.getAlarmPeriod() * 24 * 60 * 60 * 1000;
+            AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, plant.getName(), plant.getId().intValue());
+        }
+    }
+
+    private long getAlarmTimeInMillis(String alarmDate, String alarmTime, int alarmPeriod) {
+        String[] alarmDateArr = alarmDate.split("-");
+        int year = Integer.parseInt(alarmDateArr[0]);
+        int month = Integer.parseInt(alarmDateArr[1]);
+        int dayOfYear = Integer.parseInt(alarmDateArr[2]);
+        String[] alarmTimeArr = alarmTime.split(":");
+        int hourOfDay = Integer.parseInt(alarmTimeArr[0]);
+        int minute = Integer.parseInt(alarmTimeArr[1]);
+
+        Calendar alarmCalendar = Calendar.getInstance();
+        alarmCalendar.set(year, month - 1, dayOfYear, hourOfDay, minute);
+        long alarmTimeInMillis = alarmCalendar.getTimeInMillis();
+        long nowTimeInMillis = Calendar.getInstance().getTimeInMillis();
+
+        while(nowTimeInMillis > alarmTimeInMillis) {
+            alarmCalendar.add(Calendar.DATE, alarmPeriod);
+            alarmTimeInMillis = alarmCalendar.getTimeInMillis();
+        }
+        return alarmTimeInMillis;
     }
 }

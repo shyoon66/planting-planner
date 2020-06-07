@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -33,6 +34,12 @@ public class ViewActivity extends AppCompatActivity {
             return;
         }
         viewPlant(plantId);
+
+        Button listBtn = findViewById(R.id.listBtn);
+        listBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
+        });
     }
 
     private long getPlantId(Intent intent) {
@@ -111,6 +118,7 @@ public class ViewActivity extends AppCompatActivity {
 
     private void setAlarmTime(String alarmTime) {
         TextView alarmDateTextView = findViewById(R.id.alarmTime);
+        alarmDateTextView.setText(alarmTime);
     }
 
     @SuppressLint("SetTextI18n")
