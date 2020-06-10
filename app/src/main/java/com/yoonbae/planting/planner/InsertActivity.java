@@ -58,6 +58,7 @@ public class InsertActivity extends AppCompatActivity {
     private TextView alarmTimeTextView;
     private Spinner periodSpinner;
     private Switch alarm;
+    private Long plantId = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,19 +125,24 @@ public class InsertActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), validator.validate(plant), Toast.LENGTH_LONG).show();
                 return;
             }
-            savePlantAndSetWaterAlarm(plant);
+
+            if (plantId > 0) {
+                updatePlantAndSetWaterAlarm(plant);
+            } else {
+                savePlantAndSetWaterAlarm(plant);
+            }
         });
     }
 
     private void initPlant() {
         Intent intent = getIntent();
-        long id = getPlantId(intent);
-        if (id == 0) {
+        plantId = getPlantId(intent);
+        if (plantId == 0) {
             return;
         }
         PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
         PlantDao plantDao = plantDatabase.plantDao();
-        plantDao.findById(id).observe(this, plant -> {
+        plantDao.findById(plantId).observe(this, plant -> {
             Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
             Glide.with(this).load(imageUri).into(imageView);
 
@@ -317,25 +323,35 @@ public class InsertActivity extends AppCompatActivity {
         return plant;
     }
 
-    public void savePlantAndSetWaterAlarm(Plant plant) {
+    private void savePlantAndSetWaterAlarm(Plant plant) {
         databaseWriteExecutor.execute(() -> {
             PlantDatabase plantDatabase = PlantDatabase.getDatabase(InsertActivity.this);
             PlantDao plantDao = plantDatabase.plantDao();
             plantDao.insert(plant);
-            setWaterAlarm(plant);
+            Long latestPlantId = plantDao.findLatestPlantId();
+            setWaterAlarm(plant, latestPlantId.intValue());
             Intent intent = new Intent(InsertActivity.this, ListActivity.class);
             startActivity(intent);
         });
     }
 
-    private void setWaterAlarm(Plant plant) {
-        AlarmService.INSTANCE.cancelAlarm(getApplicationContext(), plant.getId().intValue());
+    private void updatePlantAndSetWaterAlarm(Plant plant) {
+        databaseWriteExecutor.execute(() -> {
+            PlantDatabase plantDatabase = PlantDatabase.getDatabase(InsertActivity.this);
+            PlantDao plantDao = plantDatabase.plantDao();
+            plantDao.update(plant);
+            setWaterAlarm(plant, plant.getId().intValue());
+        });
+    }
+
+    private void setWaterAlarm(Plant plant, int plantId) {
+        AlarmService.INSTANCE.cancelAlarm(getApplicationContext(), plantId);
         if (plant.isAlarm()) {
             String alarmDate = plant.getAlaramDateTime().format(DateTimeFormatter.ISO_DATE);
             String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             long alarmTimeInMillis = getAlarmTimeInMillis(alarmDate, alarmTime, plant.getAlarmPeriod());
             long intervalMillis = plant.getAlarmPeriod() * 24 * 60 * 60 * 1000;
-            AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, plant.getName(), plant.getId().intValue());
+            AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, plant.getName(), plantId);
         }
     }
 

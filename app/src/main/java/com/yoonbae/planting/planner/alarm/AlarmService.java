@@ -5,8 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-public class AlarmService {
-    public static volatile AlarmService INSTANCE;
+public enum AlarmService {
+    INSTANCE;
 
     public void registeringAnAlarm(Context context, Long timeInMillis, Long intervalMillis, String name, int alarmId) {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

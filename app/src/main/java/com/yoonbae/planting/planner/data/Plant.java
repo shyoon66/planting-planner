@@ -29,6 +29,8 @@ public class Plant {
 
     private String imagePath;
 
+    private int alarmId;
+
     public Long getId() {
         return id;
     }
@@ -93,6 +95,14 @@ public class Plant {
         this.imagePath = imagePath;
     }
 
+    public int getAlarmId() {
+        return alarmId;
+    }
+
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -105,6 +115,7 @@ public class Plant {
                 ", alaramDateTime=" + alaramDateTime +
                 ", alarmPeriod=" + alarmPeriod +
                 ", imagePath='" + imagePath + '\'' +
+                ", alarmId=" + alarmId +
                 '}';
     }
 }

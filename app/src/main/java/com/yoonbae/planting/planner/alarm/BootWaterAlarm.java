@@ -36,7 +36,7 @@ public class BootWaterAlarm extends AppCompatActivity {
             calendar.set(year, month, dayOfMonth, hourOfDay, minute);
             long alarmTimeInMillis = calendar.getTimeInMillis();
             long intervalMillis = pod * 24 * 60 * 60 * 1000;
-            AlarmService.INSTANCE.RegisteringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, name, alarmId);
+            AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, name, alarmId);
         }
     }
 
