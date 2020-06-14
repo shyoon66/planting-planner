@@ -9,13 +9,13 @@ public enum AlarmService {
     INSTANCE;
 
     public void registeringAnAlarm(Context context, Long timeInMillis, Long intervalMillis, String name, int alarmId) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("name", name);
         intent.putExtra("alarmId", alarmId);
         PendingIntent sender = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        assert am != null;
-        am.setRepeating(AlarmManager.RTC_WAKEUP, timeInMillis, intervalMillis, sender);
+        assert alarmManager != null;
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, timeInMillis, intervalMillis, sender);
     }
 
     public void cancelAlarm(Context context, int alarmId) {

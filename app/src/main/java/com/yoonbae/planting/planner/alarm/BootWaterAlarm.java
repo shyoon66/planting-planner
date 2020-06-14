@@ -4,7 +4,12 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.data.PlantDao;
+import com.yoonbae.planting.planner.data.PlantDatabase;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +19,28 @@ public class BootWaterAlarm extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        initWaterAlarm();
     }
 
-    private void setAlarm(String alarmDate, String alarmTime, int pod, String name, int alarmId) {
+    private void initWaterAlarm() {
+        PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
+        PlantDao plantDao = plantDatabase.plantDao();
+        plantDao.findAll().observe(this, plants -> {
+            for (Plant plant : plants) {
+                String alarmDate = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+                int alarmPeriod = plant.getAlarmPeriod();
+                String name = plant.getName();
+                int alarmId = plant.getId().intValue();
+                setAlarm(alarmDate, alarmTime, alarmPeriod, name, alarmId);
+            }
+        });
+    }
+
+    private void setAlarm(String alarmDate, String alarmTime, int period, String name, int alarmId) {
         Map<String, Integer> alarmDateMap = getAlarmDate(alarmDate);
         Map<String, Integer> alarmTimeMap = getAlarmTime(alarmTime);
-        if(alarmDateMap != null && alarmTimeMap != null) {
+        if(!alarmDateMap.isEmpty() && !alarmTimeMap.isEmpty()) {
             int year = alarmDateMap.get("year");
             int month = alarmDateMap.get("month");
             int dayOfMonth = alarmDateMap.get("dayOfMonth");
@@ -30,12 +50,12 @@ public class BootWaterAlarm extends AppCompatActivity {
             LocalDateTime alarmDateTime = LocalDateTime.of(year, month, dayOfMonth, hourOfDay, minute);
             LocalDateTime nowDateTime = LocalDateTime.now();
             while(alarmDateTime.isBefore(nowDateTime) || alarmDateTime.isEqual(nowDateTime))
-                alarmDateTime.plusDays(pod);
+                alarmDateTime.plusDays(period);
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, dayOfMonth, hourOfDay, minute);
             long alarmTimeInMillis = calendar.getTimeInMillis();
-            long intervalMillis = pod * 24 * 60 * 60 * 1000;
+            long intervalMillis = period * 24 * 60 * 60 * 1000;
             AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, name, alarmId);
         }
     }
@@ -53,24 +73,11 @@ public class BootWaterAlarm extends AppCompatActivity {
     }
 
     private Map<String, Integer> getAlarmTime(String alarmTime) {
-        int hourOfDay = Integer.parseInt(alarmTime.substring(0, alarmTime.indexOf("시")));
-        int minute = Integer.parseInt(alarmTime.substring(alarmTime.indexOf("시") + 2, alarmTime.length() - 1));
+        int hourOfDay = Integer.parseInt(alarmTime.substring(0, alarmTime.indexOf(":")));
+        int minute = Integer.parseInt(alarmTime.substring(alarmTime.indexOf(":") + 2, alarmTime.length() - 1));
         Map<String, Integer> resultMap = new HashMap<>();
         resultMap.put("hourOfDay", hourOfDay);
         resultMap.put("minute", minute);
         return resultMap;
-    }
-
-    private int getPeriod(String period) {
-        int pod;
-
-        if("매일".equals(period))
-            pod = 1;
-        else if("이틀".equals(period))
-            pod = 2;
-        else
-            pod = Integer.parseInt(period.substring(0, period.length() - 1));
-
-        return pod;
     }
 }

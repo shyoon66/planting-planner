@@ -13,7 +13,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.List;
 
 public abstract class PermissionUtils {
-
     public static PermissionType request(Activity activity) {
         final PermissionType[] permissionType = new PermissionType[1];
         Dexter.withActivity(activity)
