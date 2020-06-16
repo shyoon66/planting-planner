@@ -17,11 +17,21 @@ import com.yoonbae.planting.planner.calendar.decorator.OneDayDecorator;
 import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
+import com.yoonbae.planting.planner.util.DateUtils;
 
 import org.threeten.bp.DayOfWeek;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
+
 public class MainActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
     private MaterialCalendarView calendarView;
+    private List<Plant> plants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
             return false;
         });
-
-        new Thread(() -> {
-            calendarSetting();
-            waterAlarmDatesSetting();
-        });
+        calendarSetting();
+        waterAlarmDatesSetting();
     }
 
     private void calendarSetting() {
@@ -62,22 +69,17 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     }
 
     private void waterAlarmDatesSetting() {
-        PlantDatabase database = PlantDatabase.getDatabase(this);
-        PlantDao plantDao = database.plantDao();
-        plantDao.findPlantsWithWateringAlarmSet().observe(this, plants -> {
-            for (Plant plant : plants) {
-                calendarEvent();
-            }
+        databaseWriteExecutor.execute(() -> {
+            PlantDatabase database = PlantDatabase.getDatabase(this);
+            PlantDao plantDao = database.plantDao();
+            plants = Optional.ofNullable(plantDao.findPlantsWithWateringAlarmSet()).orElseGet(ArrayList::new);
+            calendarEvent();
         });
     }
 
     private void calendarEvent() {
         onMonthChanged(calendarView, CalendarDay.today());
         //onDateSelected(calendarView, CalendarDay.today(), true);
-    }
-
-    private void waterAlarmDateSetting(Plant plant) {
-
     }
 
     @Override
@@ -87,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+        LocalDate firstDayOfTheMonth = DateUtils.convert2LocalDate(date);
+        LocalDate lastDayOfTheMonth = DateUtils.getLastDayOfTheMonth(date);
+        for (Plant plant : plants) {
+            addEventDays(plant, firstDayOfTheMonth, lastDayOfTheMonth);
+        }
+    }
 
+    private void addEventDays(Plant plant, LocalDate firstDayOfTheMonth, LocalDate lastDayOfTheMonth) {
+        LocalDate alarmStartDate = plant.getAlarmDate();
+        if (alarmStartDate.isAfter(lastDayOfTheMonth)) {
+            return;
+        }
     }
 }

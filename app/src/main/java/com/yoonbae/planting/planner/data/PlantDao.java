@@ -31,5 +31,5 @@ public interface PlantDao {
     LiveData<List<Plant>> findAll();
 
     @Query("SELECT * FROM PLANT P where p.ALARM_YN = 'Y'")
-    LiveData<List<Plant>> findPlantsWithWateringAlarmSet();
+    List<Plant> findPlantsWithWateringAlarmSet();
 }

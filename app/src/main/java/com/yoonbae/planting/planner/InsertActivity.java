@@ -159,10 +159,10 @@ public class InsertActivity extends AppCompatActivity {
 
             alarm.setChecked(plant.isAlarm());
 
-            String alarmStartDt = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String alarmStartDt = plant.getAlarmDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             alarmDateTextView.setText(alarmStartDt);
 
-            String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+            String alarmTime = plant.getAlarmDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             alarmTimeTextView.setText(alarmTime);
 
             Resources res = getResources();
@@ -309,14 +309,14 @@ public class InsertActivity extends AppCompatActivity {
             String alarmTime = Optional.of(alarmTimeTextView.getEditableText().toString()).orElse("");
             if (!alarmDate.equals("날짜를 선택해주세요.") && !alarmTime.equals("시간을 선택해주세요.")) {
                 LocalDateTime alarmDateTime = LocalDateTime.parse(alarmDate + " " + alarmTime + ":00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                plant.setAlaramDateTime(alarmDateTime);
+                plant.setAlarmDateTime(alarmDateTime);
             }
 
             String periodStr = Optional.of(periodSpinner.getSelectedItem().toString()).orElse("0일");
             int period = Integer.parseInt(periodStr.substring(0, periodStr.length() - 1));
             plant.setAlarmPeriod(period);
         } else {
-            plant.setAlaramDateTime(null);
+            plant.setAlarmDateTime(null);
             plant.setAlarmPeriod(0);
         }
 
@@ -347,8 +347,8 @@ public class InsertActivity extends AppCompatActivity {
     private void setWaterAlarm(Plant plant, int plantId) {
         AlarmService.INSTANCE.cancelAlarm(getApplicationContext(), plantId);
         if (plant.isAlarm()) {
-            String alarmDate = plant.getAlaramDateTime().format(DateTimeFormatter.ISO_DATE);
-            String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+            String alarmDate = plant.getAlarmDateTime().format(DateTimeFormatter.ISO_DATE);
+            String alarmTime = plant.getAlarmDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             long alarmTimeInMillis = getAlarmTimeInMillis(alarmDate, alarmTime, plant.getAlarmPeriod());
             long intervalMillis = plant.getAlarmPeriod() * 24 * 60 * 60 * 1000;
             AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, plant.getName(), plantId);

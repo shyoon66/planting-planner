@@ -10,8 +10,8 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Plant.class}, version = 1, exportSchema = false)
-@TypeConverters({Converters.class})
+@Database(entities = { Plant.class }, version = 1, exportSchema = false)
+@TypeConverters({ Converters.class })
 public abstract class PlantDatabase extends RoomDatabase {
     public static volatile PlantDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;

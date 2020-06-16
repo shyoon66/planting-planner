@@ -23,7 +23,7 @@ public class Plant {
     @ColumnInfo(name = "ALARM_YN")
     private boolean alarm;
 
-    private LocalDateTime alaramDateTime;
+    private LocalDateTime alarmDateTime;
 
     private int alarmPeriod;
 
@@ -71,12 +71,12 @@ public class Plant {
         this.alarm = alarm;
     }
 
-    public LocalDateTime getAlaramDateTime() {
-        return alaramDateTime;
+    public LocalDateTime getAlarmDateTime() {
+        return alarmDateTime;
     }
 
-    public void setAlaramDateTime(LocalDateTime alaramDateTime) {
-        this.alaramDateTime = alaramDateTime;
+    public void setAlarmDateTime(LocalDateTime alarmDateTime) {
+        this.alarmDateTime = alarmDateTime;
     }
 
     public int getAlarmPeriod() {
@@ -103,6 +103,10 @@ public class Plant {
         this.alarmId = alarmId;
     }
 
+    public LocalDate getAlarmDate() {
+        return this.alarmDateTime.toLocalDate();
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -112,7 +116,7 @@ public class Plant {
                 ", desc='" + desc + '\'' +
                 ", adoptionDate=" + adoptionDate +
                 ", alarm=" + alarm +
-                ", alaramDateTime=" + alaramDateTime +
+                ", alarmDateTime=" + alarmDateTime +
                 ", alarmPeriod=" + alarmPeriod +
                 ", imagePath='" + imagePath + '\'' +
                 ", alarmId=" + alarmId +

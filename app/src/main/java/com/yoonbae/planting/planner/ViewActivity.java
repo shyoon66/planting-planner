@@ -65,7 +65,7 @@ public class ViewActivity extends AppCompatActivity {
         setPlantDesc(plant.getDesc());
         setPlantAdoptionDate(plant.getAdoptionDate());
         setAlarm(plant.isAlarm());
-        setAlarmDateTime(plant.getAlaramDateTime());
+        setAlarmDateTime(plant.getAlarmDateTime());
         setAlarmPeriod(plant.getAlarmPeriod());
     }
 
