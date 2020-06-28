@@ -22,8 +22,7 @@ public enum AlarmService {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if(sender != null) {
+        if (sender != null) {
             assert am != null;
             am.cancel(sender);
             sender.cancel();

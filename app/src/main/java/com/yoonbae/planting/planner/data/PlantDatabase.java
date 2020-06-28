@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = { Plant.class }, version = 1, exportSchema = false)
+@Database(entities = { Plant.class }, version = 2, exportSchema = false)
 @TypeConverters({ Converters.class })
 public abstract class PlantDatabase extends RoomDatabase {
     public static volatile PlantDatabase INSTANCE;
@@ -26,6 +26,7 @@ public abstract class PlantDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             PlantDatabase.class, "plant_database")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

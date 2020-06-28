@@ -27,8 +27,8 @@ public class BootWaterAlarm extends AppCompatActivity {
         PlantDao plantDao = plantDatabase.plantDao();
         plantDao.findAll().observe(this, plants -> {
             for (Plant plant : plants) {
-                String alarmDate = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String alarmTime = plant.getAlaramDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+                String alarmDate = plant.getAlarmDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String alarmTime = plant.getAlarmTime().format(DateTimeFormatter.ofPattern("HH:mm"));
                 int alarmPeriod = plant.getAlarmPeriod();
                 String name = plant.getName();
                 int alarmId = plant.getId().intValue();

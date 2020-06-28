@@ -1,6 +1,7 @@
 package com.yoonbae.planting.planner;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+import com.yoonbae.planting.planner.calendar.decorator.EventDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.HighlightWeekendsDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.OneDayDecorator;
 import com.yoonbae.planting.planner.data.Plant;
@@ -20,9 +22,8 @@ import com.yoonbae.planting.planner.data.PlantDatabase;
 import com.yoonbae.planting.planner.util.DateUtils;
 
 import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.LocalDate;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,11 +33,15 @@ import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecu
 public class MainActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
     private MaterialCalendarView calendarView;
     private List<Plant> plants;
+    private List<CalendarDay> waterAlarmDays = new ArrayList<>();
+    private PlantDao plantDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PlantDatabase database = PlantDatabase.getDatabase(this);
+        plantDao = database.plantDao();
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Intent intent;
@@ -46,11 +51,10 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
                     startActivity(intent);
                     break;
             }
-
             return false;
         });
         calendarSetting();
-        waterAlarmDatesSetting();
+        waterAlarmDaysSetting();
     }
 
     private void calendarSetting() {
@@ -68,10 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         calendarView.setOnMonthChangedListener(this);
     }
 
-    private void waterAlarmDatesSetting() {
+    private void waterAlarmDaysSetting() {
         databaseWriteExecutor.execute(() -> {
-            PlantDatabase database = PlantDatabase.getDatabase(this);
-            PlantDao plantDao = database.plantDao();
             plants = Optional.ofNullable(plantDao.findPlantsWithWateringAlarmSet()).orElseGet(ArrayList::new);
             calendarEvent();
         });
@@ -89,17 +91,32 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-        LocalDate firstDayOfTheMonth = DateUtils.convert2LocalDate(date);
+        waterAlarmDays.clear();
+        LocalDate firstDayOfTheMonth = date.getDate();
         LocalDate lastDayOfTheMonth = DateUtils.getLastDayOfTheMonth(date);
         for (Plant plant : plants) {
-            addEventDays(plant, firstDayOfTheMonth, lastDayOfTheMonth);
+            addWaterAlarmDays(plant, firstDayOfTheMonth, lastDayOfTheMonth);
         }
+        calendarView.addDecorator(new EventDecorator(Color.RED, waterAlarmDays, this));
     }
 
-    private void addEventDays(Plant plant, LocalDate firstDayOfTheMonth, LocalDate lastDayOfTheMonth) {
-        LocalDate alarmStartDate = plant.getAlarmDate();
+    private void addWaterAlarmDays(Plant plant, LocalDate firstDayOfTheMonth, LocalDate lastDayOfTheMonth) {
+        LocalDate alarmStartDate = LocalDate.ofEpochDay(plant.getAlarmDate().toEpochDay());
         if (alarmStartDate.isAfter(lastDayOfTheMonth)) {
             return;
         }
+
+        LocalDate alarmDate = LocalDate.ofEpochDay(alarmStartDate.toEpochDay());
+        int alarmPeriod = plant.getAlarmPeriod();
+        while (isNotAfterLastDayOfTheMonth(alarmDate, lastDayOfTheMonth)) {
+            if (alarmDate.isEqual(firstDayOfTheMonth) || alarmDate.isAfter(firstDayOfTheMonth)) {
+                waterAlarmDays.add(CalendarDay.from(alarmDate));
+            }
+            alarmDate = alarmDate.plusDays(alarmPeriod);
+        }
+    }
+
+    private boolean isNotAfterLastDayOfTheMonth(LocalDate alarmDate, LocalDate lastDayOfTheMonth) {
+        return !alarmDate.isAfter(lastDayOfTheMonth);
     }
 }

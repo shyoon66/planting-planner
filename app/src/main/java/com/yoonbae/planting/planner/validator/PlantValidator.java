@@ -21,7 +21,7 @@ public class PlantValidator implements Validator {
 
         boolean alarm = plant.isAlarm();
         if (alarm) {
-            LocalDateTime alarmDateTime = plant.getAlaramDateTime();
+            LocalDateTime alarmDateTime = plant.getAlarmDateTime();
             if (alarmDateTime == null) {
                 return "알람시작일과 알람 시각은 필수 입력입니다.";
             }

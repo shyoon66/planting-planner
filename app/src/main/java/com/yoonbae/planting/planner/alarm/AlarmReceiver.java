@@ -49,10 +49,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private NotificationChannel getNotificationChannel() {
-        NotificationChannel notificationChannel = new NotificationChannel(
-                                                    NOTIFICATION_CHANNEL_WATER_ALARM_ID,
-                                                    NOTIFICATION_CHANNEL_WATER_ALARM_NAME,
-                                                    NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notificationChannel =
+            new NotificationChannel(NOTIFICATION_CHANNEL_WATER_ALARM_ID, NOTIFICATION_CHANNEL_WATER_ALARM_NAME,
+                                    NotificationManager.IMPORTANCE_DEFAULT);
 
         notificationChannel.setDescription("water Alarm");
         notificationChannel.enableLights(true);

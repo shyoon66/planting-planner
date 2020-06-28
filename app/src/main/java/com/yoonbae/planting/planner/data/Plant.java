@@ -1,12 +1,12 @@
 package com.yoonbae.planting.planner.data;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity(tableName = "PLANT")
 public class Plant {
@@ -20,7 +20,6 @@ public class Plant {
 
     private LocalDate adoptionDate;
 
-    @ColumnInfo(name = "ALARM_YN")
     private boolean alarm;
 
     private LocalDateTime alarmDateTime;
@@ -105,6 +104,10 @@ public class Plant {
 
     public LocalDate getAlarmDate() {
         return this.alarmDateTime.toLocalDate();
+    }
+
+    public LocalTime getAlarmTime() {
+        return this.alarmDateTime.toLocalTime();
     }
 
     @NonNull
