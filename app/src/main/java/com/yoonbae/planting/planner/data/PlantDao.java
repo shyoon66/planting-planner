@@ -25,11 +25,11 @@ public interface PlantDao {
     LiveData<Plant> findById(Long id);
 
     @Query("SELECT p.id FROM PLANT p ORDER BY p.id DESC LIMIT 1")
-    Long findLatestPlantId();
+    LiveData<Long> findLatestPlantId();
 
     @Query("SELECT * FROM PLANT")
     LiveData<List<Plant>> findAll();
 
     @Query("SELECT * FROM PLANT P where p.ALARM = 1")
-    List<Plant> findPlantsWithWateringAlarmSet();
+    LiveData<List<Plant>> findPlantsWithWateringAlarmSet();
 }

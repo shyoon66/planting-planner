@@ -326,10 +326,11 @@ public class InsertActivity extends AppCompatActivity {
     private void savePlantAndSetWaterAlarm(Plant plant) {
         databaseWriteExecutor.execute(() -> {
             plantDao.insert(plant);
-            Long latestPlantId = plantDao.findLatestPlantId();
-            setWaterAlarm(plant, latestPlantId.intValue());
-            Intent intent = new Intent(InsertActivity.this, ListActivity.class);
-            startActivity(intent);
+            plantDao.findLatestPlantId().observe(this, latestPlantId -> {
+                setWaterAlarm(plant, latestPlantId.intValue());
+                Intent intent = new Intent(InsertActivity.this, ListActivity.class);
+                startActivity(intent);
+            });
         });
     }
 

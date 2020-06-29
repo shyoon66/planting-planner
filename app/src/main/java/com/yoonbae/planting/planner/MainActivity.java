@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     }
 
     private void waterAlarmDaysSetting() {
-        databaseWriteExecutor.execute(() -> {
-            plants = Optional.ofNullable(plantDao.findPlantsWithWateringAlarmSet()).orElseGet(ArrayList::new);
+        plantDao.findPlantsWithWateringAlarmSet().observe(this, plants -> {
+            this.plants = plants;
             calendarEvent();
         });
     }
