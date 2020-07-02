@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -17,31 +18,32 @@ import com.yoonbae.planting.planner.calendar.decorator.EventDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.HighlightWeekendsDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.OneDayDecorator;
 import com.yoonbae.planting.planner.data.Plant;
-import com.yoonbae.planting.planner.data.PlantDao;
-import com.yoonbae.planting.planner.data.PlantDatabase;
 import com.yoonbae.planting.planner.util.DateUtils;
+import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class MainActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
     private MaterialCalendarView calendarView;
     private List<Plant> plants;
     private List<CalendarDay> waterAlarmDays = new ArrayList<>();
-    private PlantDao plantDao;
+    private PlantViewModel plantViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PlantDatabase database = PlantDatabase.getDatabase(this);
-        plantDao = database.plantDao();
+        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
+        initBottomNavigationView();
+        calendarSetting();
+        waterAlarmDaysSetting();
+    }
+
+    private void initBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Intent intent;
@@ -53,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             }
             return false;
         });
-        calendarSetting();
-        waterAlarmDaysSetting();
     }
 
     private void calendarSetting() {
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     }
 
     private void waterAlarmDaysSetting() {
-        plantDao.findPlantsWithWateringAlarmSet().observe(this, plants -> {
+        plantViewModel.findPlantsWithWateringAlarmSet().observe(this, plants -> {
             this.plants = plants;
             calendarEvent();
         });

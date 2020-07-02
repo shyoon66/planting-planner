@@ -9,39 +9,48 @@ import android.view.MenuItem;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.yoonbae.planting.planner.adapter.MyRecyclerViewAdapter;
-import com.yoonbae.planting.planner.data.PlantDao;
-import com.yoonbae.planting.planner.data.PlantDatabase;
+import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
 public class ListActivity extends AppCompatActivity {
+    private PlantViewModel plantViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        initToolBar();
+        initActionBar();
+        initBottomNavigationView();
+        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
+        final RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
+        settingPlantList(recyclerView);
+    }
 
+    private void initToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
 
-        // Get the ActionBar here to configure the way it behaves.
+    private void initActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
-            //actionBar.setIcon(R.drawable.baseline_add_black_24);
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);    // 커스터마이징 하기 위해 필요
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(false);      // 뒤로가기 버튼, 디폴트로 true만 해도 백버튼이 생김
-            //actionBar.setHomeAsUpIndicator(R.drawable.baseline_keyboard_arrow_left_black_24);
+        if (actionBar == null) {
+            return;
         }
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+    }
 
-        final RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
+    private void initBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.setSelectedItemId(R.id.action_list);
-        //BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Intent intent;
             switch (item.getItemId()) {
@@ -50,13 +59,12 @@ public class ListActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
             }
-
             return false;
         });
+    }
 
-        PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
-        PlantDao plantDao = plantDatabase.plantDao();
-        plantDao.findAll().observe(this, plants -> {
+    private void settingPlantList(RecyclerView recyclerView) {
+        plantViewModel.findAll().observe(this, plants -> {
             recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
             MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);
             recyclerView.setAdapter(myRecyclerViewAdapter);

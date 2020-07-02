@@ -23,18 +23,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.yoonbae.planting.planner.alarm.AlarmService;
 import com.yoonbae.planting.planner.data.Plant;
-import com.yoonbae.planting.planner.data.PlantDao;
-import com.yoonbae.planting.planner.data.PlantDatabase;
 import com.yoonbae.planting.planner.util.PermissionType;
 import com.yoonbae.planting.planner.util.PermissionUtils;
 import com.yoonbae.planting.planner.util.PlannerUtils;
 import com.yoonbae.planting.planner.validator.PlantValidator;
 import com.yoonbae.planting.planner.validator.Validator;
+import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +43,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Optional;
-
-import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
@@ -59,14 +57,13 @@ public class InsertActivity extends AppCompatActivity {
     private Spinner periodSpinner;
     private Switch alarm;
     private Long plantId = 0L;
-    private PlantDao plantDao;
+    private PlantViewModel plantViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insert);
-        PlantDatabase plantDatabase = PlantDatabase.getDatabase(this);
-        plantDao = plantDatabase.plantDao();
+        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
         initComponent();
         initEvent();
         initPlant();
@@ -143,7 +140,7 @@ public class InsertActivity extends AppCompatActivity {
         if (plantId == 0) {
             return;
         }
-        plantDao.findById(plantId).observe(this, plant -> {
+        plantViewModel.findById(plantId).observe(this, plant -> {
             Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
             Glide.with(this).load(imageUri).into(imageView);
 
@@ -324,21 +321,17 @@ public class InsertActivity extends AppCompatActivity {
     }
 
     private void savePlantAndSetWaterAlarm(Plant plant) {
-        databaseWriteExecutor.execute(() -> {
-            plantDao.insert(plant);
-            plantDao.findLatestPlantId().observe(this, latestPlantId -> {
-                setWaterAlarm(plant, latestPlantId.intValue());
-                Intent intent = new Intent(InsertActivity.this, ListActivity.class);
-                startActivity(intent);
-            });
+        plantViewModel.insert(plant);
+        plantViewModel.findLatestPlantId().observe(this, latestPlantId -> {
+            setWaterAlarm(plant, latestPlantId.intValue());
+            Intent intent = new Intent(InsertActivity.this, ListActivity.class);
+            startActivity(intent);
         });
     }
 
     private void updatePlantAndSetWaterAlarm(Plant plant) {
-        databaseWriteExecutor.execute(() -> {
-            plantDao.update(plant);
-            setWaterAlarm(plant, plant.getId().intValue());
-        });
+        plantViewModel.update(plant);
+        setWaterAlarm(plant, plant.getId().intValue());
     }
 
     private void setWaterAlarm(Plant plant, int plantId) {

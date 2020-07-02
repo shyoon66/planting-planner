@@ -11,11 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.yoonbae.planting.planner.data.Plant;
-import com.yoonbae.planting.planner.data.PlantDao;
-import com.yoonbae.planting.planner.data.PlantDatabase;
+import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -23,12 +23,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ViewActivity extends AppCompatActivity {
-    private static final String TAG = "ViewActivity";
+    private PlantViewModel plantViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
+        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
+
         long plantId = getPlantId(getIntent());
         if (plantId == 0) {
             return;
@@ -54,9 +56,7 @@ public class ViewActivity extends AppCompatActivity {
     }
 
     private void viewPlant(Long plantId) {
-        PlantDatabase plantDatabase = PlantDatabase.getDatabase(ViewActivity.this);
-        PlantDao plantDao = plantDatabase.plantDao();
-        plantDao.findById(plantId).observe(this, this::setPlant);
+        plantViewModel.findById(plantId).observe(this, this::setPlant);
     }
 
     private void setPlant(Plant plant) {
@@ -101,13 +101,13 @@ public class ViewActivity extends AppCompatActivity {
         alarm.setChecked(isAlarm);
     }
 
-    private void setAlarmDateTime(LocalDateTime alaramDateTime) {
-        if (alaramDateTime == null) {
+    private void setAlarmDateTime(LocalDateTime alarmDateTime) {
+        if (alarmDateTime == null) {
             return;
         }
-        String alarmDate = alaramDateTime.format(DateTimeFormatter.ISO_DATE);
+        String alarmDate = alarmDateTime.format(DateTimeFormatter.ISO_DATE);
         setAlarmDate(alarmDate);
-        String alarmTime = alaramDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        String alarmTime = alarmDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
         setAlarmTime(alarmTime);
     }
 
