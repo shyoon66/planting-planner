@@ -127,6 +127,7 @@ public class InsertActivity extends AppCompatActivity {
             }
 
             if (plantId > 0) {
+                plant.setId(plantId);
                 updatePlantAndSetWaterAlarm(plant);
             } else {
                 savePlantAndSetWaterAlarm(plant);
@@ -140,8 +141,10 @@ public class InsertActivity extends AppCompatActivity {
         if (plantId == 0) {
             return;
         }
+
         plantViewModel.findById(plantId).observe(this, plant -> {
             Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
+            this.imageUri = imageUri;
             Glide.with(this).load(imageUri).into(imageView);
 
             EditText plantNameEditText = plantNameLayOut.getEditText();
@@ -165,10 +168,12 @@ public class InsertActivity extends AppCompatActivity {
 
             Resources res = getResources();
             String[] waterPeriodArr = res.getStringArray(R.array.waterPeriod);
-            String alarmPeriod = String.valueOf(plant.getAlarmPeriod());
-            for(int i = 0; i < waterPeriodArr.length; i++) {
-                if(waterPeriodArr[i].equals(alarmPeriod))
+            int alarmPeriod = plant.getAlarmPeriod();
+            for (int i = 0; i < waterPeriodArr.length; i++) {
+                int waterPeriod = Integer.parseInt(waterPeriodArr[i].substring(0, waterPeriodArr[i].length() - 1));
+                if (alarmPeriod == waterPeriod) {
                     periodSpinner.setSelection(i);
+                }
             }
         });
     }
@@ -326,12 +331,16 @@ public class InsertActivity extends AppCompatActivity {
             setWaterAlarm(plant, latestPlantId.intValue());
             Intent intent = new Intent(InsertActivity.this, ListActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 
     private void updatePlantAndSetWaterAlarm(Plant plant) {
         plantViewModel.update(plant);
-        setWaterAlarm(plant, plant.getId().intValue());
+        setWaterAlarm(plant, plantId.intValue());
+        Intent intent = new Intent(InsertActivity.this, ListActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void setWaterAlarm(Plant plant, int plantId) {

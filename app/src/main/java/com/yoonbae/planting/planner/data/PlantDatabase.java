@@ -26,7 +26,6 @@ public abstract class PlantDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             PlantDatabase.class, "plant_database")
-                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
