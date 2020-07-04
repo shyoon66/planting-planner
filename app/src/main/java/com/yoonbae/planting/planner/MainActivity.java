@@ -3,6 +3,9 @@ package com.yoonbae.planting.planner;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +17,12 @@ import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+import com.yoonbae.planting.planner.adapter.ListViewAdapter;
 import com.yoonbae.planting.planner.calendar.decorator.EventDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.HighlightWeekendsDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.OneDayDecorator;
 import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.data.PlantEvent;
 import com.yoonbae.planting.planner.util.DateUtils;
 import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
@@ -27,20 +32,23 @@ import org.threeten.bp.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener {
-    private MaterialCalendarView calendarView;
-    private List<Plant> plants;
-    private List<CalendarDay> waterAlarmDays = new ArrayList<>();
+public class MainActivity extends AppCompatActivity implements OnDateSelectedListener, OnMonthChangedListener, AdapterView.OnItemClickListener  {
     private PlantViewModel plantViewModel;
+    private MaterialCalendarView calendarView;
+    private ListView listview;
+    private List<Plant> plants = new ArrayList<>();
+    private List<CalendarDay> waterAlarmDays = new ArrayList<>();
+    private List<PlantEvent> plantEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
+        listview = findViewById(R.id.listview);
         initBottomNavigationView();
-        calendarSetting();
-        waterAlarmDaysSetting();
+        initCalendar();
+        initWaterAlarmDays();
     }
 
     private void initBottomNavigationView() {
@@ -51,13 +59,14 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
                 case R.id.action_list:
                     intent = new Intent(MainActivity.this, ListActivity.class);
                     startActivity(intent);
+                    finish();
                     break;
             }
             return false;
         });
     }
 
-    private void calendarSetting() {
+    private void initCalendar() {
         calendarView = findViewById(R.id.calendarView);
         calendarView.setDateSelected(CalendarDay.today(), true);
         calendarView.state().edit()
@@ -72,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         calendarView.setOnMonthChangedListener(this);
     }
 
-    private void waterAlarmDaysSetting() {
+    private void initWaterAlarmDays() {
         plantViewModel.findPlantsWithWateringAlarmSet().observe(this, plants -> {
             this.plants = plants;
             calendarEvent();
@@ -81,17 +90,13 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     private void calendarEvent() {
         onMonthChanged(calendarView, CalendarDay.today());
-        //onDateSelected(calendarView, CalendarDay.today(), true);
-    }
-
-    @Override
-    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-
+        onDateSelected(calendarView, CalendarDay.today(), true);
     }
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
         waterAlarmDays.clear();
+        plantEvents.clear();
         LocalDate firstDayOfTheMonth = date.getDate();
         LocalDate lastDayOfTheMonth = DateUtils.getLastDayOfTheMonth(date);
         for (Plant plant : plants) {
@@ -109,8 +114,9 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         LocalDate alarmDate = LocalDate.ofEpochDay(alarmStartDate.toEpochDay());
         int alarmPeriod = plant.getAlarmPeriod();
         while (isNotAfterLastDayOfTheMonth(alarmDate, lastDayOfTheMonth)) {
-            if (alarmDate.isEqual(firstDayOfTheMonth) || alarmDate.isAfter(firstDayOfTheMonth)) {
+            if (isValidAlarmDate(firstDayOfTheMonth, alarmDate)) {
                 waterAlarmDays.add(CalendarDay.from(alarmDate));
+                plantEvents.add(new PlantEvent(plant.getId(), plant.getName(), plant.getAlarmTime(), CalendarDay.from(alarmDate)));
             }
             alarmDate = alarmDate.plusDays(alarmPeriod);
         }
@@ -118,5 +124,31 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     private boolean isNotAfterLastDayOfTheMonth(LocalDate alarmDate, LocalDate lastDayOfTheMonth) {
         return !alarmDate.isAfter(lastDayOfTheMonth);
+    }
+
+    private boolean isValidAlarmDate(LocalDate firstDayOfTheMonth, LocalDate alarmDate) {
+        return alarmDate.isEqual(firstDayOfTheMonth) || alarmDate.isAfter(firstDayOfTheMonth);
+    }
+
+    @Override
+    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        ListViewAdapter adapter = new ListViewAdapter();
+        for (PlantEvent plantEvent : plantEvents) {
+            if (date.equals(plantEvent.getCalendarDay())) {
+                adapter.addItem(plantEvent);
+            }
+        }
+
+        if (adapter.getCount() == 0) {
+            listview.setAdapter(null);
+        } else {
+            listview.setAdapter(adapter);
+            listview.setOnItemClickListener(this);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 }
