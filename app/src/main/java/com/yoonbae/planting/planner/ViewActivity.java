@@ -98,6 +98,7 @@ public class ViewActivity extends AppCompatActivity {
 
     private void setAlarm(boolean isAlarm) {
         Switch alarm = findViewById(R.id.alarm);
+        alarm.setClickable(false);
         alarm.setChecked(isAlarm);
     }
 

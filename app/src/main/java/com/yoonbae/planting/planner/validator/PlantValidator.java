@@ -20,6 +20,15 @@ public class PlantValidator implements Validator {
             return "식물 이름을 입력해 주세요.";
         }
 
+        if (plantName.length() > 50) {
+            return "식물 이름은 50자 이하로 입력할 수 있습니다.";
+        }
+
+        String desc = plant.getDesc();
+        if (desc.length() > 100) {
+            return "식물 설명은 100자 이하로 입력할 수 있습니다.";
+        }
+
         boolean alarm = plant.isAlarm();
         if (alarm) {
             LocalDate alarmDate = plant.getAlarmDate();
