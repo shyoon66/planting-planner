@@ -149,6 +149,10 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        PlantEvent plantEvent = (PlantEvent) parent.getItemAtPosition(position);
+        Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+        intent.putExtra("id", plantEvent.getId());
+        startActivity(intent);
+        finish();
     }
 }

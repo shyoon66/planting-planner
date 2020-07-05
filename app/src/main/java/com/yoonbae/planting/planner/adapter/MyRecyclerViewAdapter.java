@@ -77,7 +77,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         });
     }
 
-    private void updatePlant(Long id) {
+    private void updatePlant(Integer id) {
         Intent intent = new Intent(context, InsertActivity.class);
         intent.putExtra("id", id);
         context.startActivity(intent);
@@ -106,15 +106,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String name = plant.getName();
         ab.setTitle(name + "을(를) 삭제하시겠습니까?");
         String[] items = {"예", "아니오"};
-
-        // 목록 클릭시 설정
         ab.setItems(items, (dialog, index) -> {
-            if(index == 0) {
+            if (index == 0) {
                 deletePlantProcess(plant);
             }
             dialog.dismiss();
         });
-
         ab.show();
     }
 

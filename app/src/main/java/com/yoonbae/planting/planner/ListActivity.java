@@ -86,10 +86,12 @@ public class ListActivity extends AppCompatActivity {
             case android.R.id.home:
                 intent = new Intent(ListActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.action_insert:
                 intent = new Intent(ListActivity.this, InsertActivity.class);
                 startActivity(intent);
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

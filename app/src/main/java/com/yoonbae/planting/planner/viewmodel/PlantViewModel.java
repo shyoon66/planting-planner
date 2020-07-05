@@ -33,11 +33,11 @@ public class PlantViewModel extends AndroidViewModel {
         repository.delete(plant);
     }
 
-    public LiveData<Plant> findById(Long id) {
+    public LiveData<Plant> findById(Integer id) {
         return repository.findById(id);
     }
 
-    public LiveData<Long> findLatestPlantId() {
+    public LiveData<Integer> findLatestPlantId() {
         return repository.findLatestPlantId();
     }
 

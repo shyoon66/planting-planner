@@ -22,10 +22,10 @@ public interface PlantDao {
     void delete(Plant plant);
 
     @Query("SELECT * FROM PLANT p WHERE p.id = :id LIMIT 1")
-    LiveData<Plant> findById(Long id);
+    LiveData<Plant> findById(Integer id);
 
     @Query("SELECT p.id FROM PLANT p ORDER BY p.id DESC LIMIT 1")
-    LiveData<Long> findLatestPlantId();
+    LiveData<Integer> findLatestPlantId();
 
     @Query("SELECT * FROM PLANT")
     LiveData<List<Plant>> findAll();

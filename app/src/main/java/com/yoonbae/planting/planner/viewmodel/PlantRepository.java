@@ -36,11 +36,11 @@ public class PlantRepository {
         databaseWriteExecutor.execute(() -> plantDao.delete(plant));
     }
 
-    public LiveData<Plant> findById(Long id) {
+    public LiveData<Plant> findById(Integer id) {
         return plantDao.findById(id);
     }
 
-    public LiveData<Long> findLatestPlantId() {
+    public LiveData<Integer> findLatestPlantId() {
         return plantDao.findLatestPlantId();
     }
 

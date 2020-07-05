@@ -56,7 +56,7 @@ public class InsertActivity extends AppCompatActivity {
     private TextView alarmTimeTextView;
     private Spinner periodSpinner;
     private Switch alarm;
-    private Long plantId = 0L;
+    private Integer plantId = 0;
     private PlantViewModel plantViewModel;
 
     @Override
@@ -178,8 +178,8 @@ public class InsertActivity extends AppCompatActivity {
         });
     }
 
-    private long getPlantId(Intent intent) {
-        return intent.getLongExtra("id", 0);
+    private Integer getPlantId(Intent intent) {
+        return intent.getIntExtra("id", 0);
     }
 
     private void setEnableAlarmItems(boolean b) {
@@ -328,7 +328,7 @@ public class InsertActivity extends AppCompatActivity {
     private void savePlantAndSetWaterAlarm(Plant plant) {
         plantViewModel.insert(plant);
         plantViewModel.findLatestPlantId().observe(this, latestPlantId -> {
-            setWaterAlarm(plant, latestPlantId.intValue());
+            setWaterAlarm(plant, latestPlantId);
             Intent intent = new Intent(InsertActivity.this, ListActivity.class);
             startActivity(intent);
             finish();

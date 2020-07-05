@@ -12,7 +12,7 @@ import java.time.LocalTime;
 public class Plant {
 
     @PrimaryKey(autoGenerate = true)
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -30,11 +30,11 @@ public class Plant {
 
     private int alarmId;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

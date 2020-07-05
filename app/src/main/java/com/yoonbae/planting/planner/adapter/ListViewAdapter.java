@@ -11,12 +11,10 @@ import com.yoonbae.planting.planner.R;
 import com.yoonbae.planting.planner.data.PlantEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ListViewAdapter extends BaseAdapter {
-    private List<Map<String, String>> listViewItemList = new ArrayList<>();
+    private List<PlantEvent> listViewItemList = new ArrayList<>();
 
     public ListViewAdapter() {}
 
@@ -35,9 +33,9 @@ public class ListViewAdapter extends BaseAdapter {
 
         TextView nameTextView = convertView.findViewById(R.id.name);
         TextView alarmTextView = convertView.findViewById(R.id.alarm);
-        Map<String, String> listViewItem = listViewItemList.get(position);
-        nameTextView.setText(listViewItem.get("name"));
-        alarmTextView.setText(listViewItem.get("alarmMessage"));
+        PlantEvent plantEvent = listViewItemList.get(position);
+        nameTextView.setText(plantEvent.getName());
+        alarmTextView.setText(plantEvent.getAlarmMessage());
         return convertView;
     }
 
@@ -47,15 +45,11 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public PlantEvent getItem(int position) {
         return listViewItemList.get(position);
     }
 
     public void addItem(PlantEvent plantEvent) {
-        Map<String, String> item = new HashMap<>();
-        item.put("id", String.valueOf(plantEvent.getId()));
-        item.put("name", plantEvent.getName());
-        item.put("alarmMessage", plantEvent.getAlarmMessage());
-        listViewItemList.add(item);
+        listViewItemList.add(plantEvent);
     }
 }

@@ -30,32 +30,35 @@ public class ViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
         plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
-
-        long plantId = getPlantId(getIntent());
-        if (plantId == 0) {
-            return;
-        }
+        initListButton();
+        Integer plantId = getPlantId(getIntent());
         viewPlant(plantId);
+    }
 
+    private void initListButton() {
         Button listBtn = findViewById(R.id.listBtn);
         listBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, ListActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 
-    private long getPlantId(Intent intent) {
-        long id = intent.getLongExtra("id", 0);
+    private Integer getPlantId(Intent intent) {
+        int id = intent.getIntExtra("id", 0);
         if (id == 0) {
             Toast.makeText(this, "식물정보를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show();
             Intent listViewIntent = new Intent(ViewActivity.this, ListActivity.class);
             startActivity(listViewIntent);
-            return 0;
+            finish();
         }
         return id;
     }
 
-    private void viewPlant(Long plantId) {
+    private void viewPlant(Integer plantId) {
+        if (plantId == 0) {
+            return;
+        }
         plantViewModel.findById(plantId).observe(this, this::setPlant);
     }
 

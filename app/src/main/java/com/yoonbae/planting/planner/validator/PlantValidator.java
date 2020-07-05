@@ -2,9 +2,6 @@ package com.yoonbae.planting.planner.validator;
 
 import com.yoonbae.planting.planner.data.Plant;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 public class PlantValidator implements Validator {
     @Override
     public <T> String validate(T object) {
@@ -29,20 +26,14 @@ public class PlantValidator implements Validator {
             return "식물 설명은 100자 이하로 입력할 수 있습니다.";
         }
 
-        boolean alarm = plant.isAlarm();
-        if (alarm) {
-            LocalDate alarmDate = plant.getAlarmDate();
-            if (alarmDate == null) {
+        if (plant.isAlarm()) {
+            if (plant.getAlarmDate() == null) {
                 return "알람 시작일을 설정해 주세요.";
             }
-
-            LocalTime alarmTime = plant.getAlarmTime();
-            if (alarmTime == null) {
+            if (plant.getAlarmTime() == null) {
                 return "알람 시각을 설정해 주세요.";
             }
-
-            int alarmPeriod = plant.getAlarmPeriod();
-            if (alarmPeriod == 0) {
+            if (plant.getAlarmPeriod() == 0) {
                 return "알람주기를 설정해 주세요.";
             }
         }
