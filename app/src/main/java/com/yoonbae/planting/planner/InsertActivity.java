@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.yoonbae.planting.planner.alarm.AlarmService;
 import com.yoonbae.planting.planner.data.Plant;
+import com.yoonbae.planting.planner.util.DateUtils;
 import com.yoonbae.planting.planner.util.PermissionType;
 import com.yoonbae.planting.planner.util.PermissionUtils;
 import com.yoonbae.planting.planner.util.PlannerUtils;
@@ -41,7 +42,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Optional;
 
 public class InsertActivity extends AppCompatActivity {
@@ -337,7 +337,7 @@ public class InsertActivity extends AppCompatActivity {
 
     private void updatePlantAndSetWaterAlarm(Plant plant) {
         plantViewModel.update(plant);
-        setWaterAlarm(plant, plantId.intValue());
+        setWaterAlarm(plant, plantId);
         Intent intent = new Intent(InsertActivity.this, ListActivity.class);
         startActivity(intent);
         finish();
@@ -348,31 +348,8 @@ public class InsertActivity extends AppCompatActivity {
         if (!plant.isAlarm()) {
             return;
         }
-        String alarmDate = plant.getAlarmDateTime().format(DateTimeFormatter.ISO_DATE);
-        String alarmTime = plant.getAlarmDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-        long alarmTimeInMillis = getAlarmTimeInMillis(alarmDate, alarmTime, plant.getAlarmPeriod());
-        long intervalMillis = plant.getAlarmPeriod() * 24 * 60 * 60 * 1000;
+        long alarmTimeInMillis = DateUtils.getAlarmTimeInMillis(plant.getAlarmDateTime(), plant.getAlarmPeriod());
+        long intervalMillis = DateUtils.getAlarmPeriodInterval(plant.getAlarmPeriod());
         AlarmService.INSTANCE.registeringAnAlarm(getApplicationContext(), alarmTimeInMillis, intervalMillis, plant.getName(), plantId);
-    }
-
-    private long getAlarmTimeInMillis(String alarmDate, String alarmTime, int alarmPeriod) {
-        String[] alarmDateArr = alarmDate.split("-");
-        int year = Integer.parseInt(alarmDateArr[0]);
-        int month = Integer.parseInt(alarmDateArr[1]);
-        int dayOfYear = Integer.parseInt(alarmDateArr[2]);
-        String[] alarmTimeArr = alarmTime.split(":");
-        int hourOfDay = Integer.parseInt(alarmTimeArr[0]);
-        int minute = Integer.parseInt(alarmTimeArr[1]);
-
-        Calendar alarmCalendar = Calendar.getInstance();
-        alarmCalendar.set(year, month - 1, dayOfYear, hourOfDay, minute);
-        long alarmTimeInMillis = alarmCalendar.getTimeInMillis();
-        long nowTimeInMillis = Calendar.getInstance().getTimeInMillis();
-
-        while(nowTimeInMillis > alarmTimeInMillis) {
-            alarmCalendar.add(Calendar.DATE, alarmPeriod);
-            alarmTimeInMillis = alarmCalendar.getTimeInMillis();
-        }
-        return alarmTimeInMillis;
     }
 }

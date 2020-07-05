@@ -24,9 +24,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel notificationChannel = getNotificationChannel();
-        assert notificationManager != null;
         notificationManager.createNotificationChannel(notificationChannel);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_WATER_ALARM_ID);
 
@@ -37,7 +35,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         String name = intent.getStringExtra("name");
-        builder.setContentTitle(context.getResources().getString(R.string.app_name))
+        builder
+            .setContentTitle(context.getResources().getString(R.string.app_name))
             .setContentText(name + " 물주기 알람입니다.")
             .setDefaults(Notification.DEFAULT_ALL)
             .setAutoCancel(true)
