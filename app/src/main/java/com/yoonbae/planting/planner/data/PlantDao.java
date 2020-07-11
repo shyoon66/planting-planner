@@ -13,7 +13,7 @@ import java.util.List;
 public interface PlantDao {
 
     @Insert
-    void insert(Plant plant);
+    Long insert(Plant plant);
 
     @Update
     void update(Plant plant);
@@ -23,9 +23,6 @@ public interface PlantDao {
 
     @Query("SELECT * FROM PLANT p WHERE p.id = :id LIMIT 1")
     LiveData<Plant> findById(Integer id);
-
-    @Query("SELECT p.id FROM PLANT p ORDER BY p.id DESC LIMIT 1")
-    LiveData<Integer> findLatestPlantId();
 
     @Query("SELECT * FROM PLANT")
     LiveData<List<Plant>> findAll();

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.yoonbae.planting.planner.data.Plant;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class PlantViewModel extends AndroidViewModel {
     private PlantRepository repository;
@@ -21,8 +22,8 @@ public class PlantViewModel extends AndroidViewModel {
         plantsWithWateringAlarmSet = repository.findPlantsWithWateringAlarmSet();
     }
 
-    public void insert(Plant plant) {
-        repository.insert(plant);
+    public Future<Long> insert(Plant plant) {
+        return repository.insert(plant);
     }
 
     public void update(Plant plant) {
@@ -35,10 +36,6 @@ public class PlantViewModel extends AndroidViewModel {
 
     public LiveData<Plant> findById(Integer id) {
         return repository.findById(id);
-    }
-
-    public LiveData<Integer> findLatestPlantId() {
-        return repository.findLatestPlantId();
     }
 
     public LiveData<List<Plant>> findAll() {

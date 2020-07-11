@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.yoonbae.planting.planner.InsertActivity;
 import com.yoonbae.planting.planner.R;
 import com.yoonbae.planting.planner.ViewActivity;
+import com.yoonbae.planting.planner.alarm.AlarmService;
 import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
@@ -105,6 +106,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         String[] items = {"예", "아니오"};
         ab.setItems(items, (dialog, index) -> {
             if (index == 0) {
+                AlarmService.INSTANCE.cancelAlarm(context, plant.getId());
                 deletePlant(plant);
             }
             dialog.dismiss();

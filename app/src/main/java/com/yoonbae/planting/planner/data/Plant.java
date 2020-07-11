@@ -28,8 +28,6 @@ public class Plant {
 
     private String imagePath;
 
-    private int alarmId;
-
     public Integer getId() {
         return id;
     }
@@ -94,14 +92,6 @@ public class Plant {
         this.imagePath = imagePath;
     }
 
-    public int getAlarmId() {
-        return alarmId;
-    }
-
-    public void setAlarmId(int alarmId) {
-        this.alarmId = alarmId;
-    }
-
     public LocalDate getAlarmDate() {
         return this.alarmDateTime.toLocalDate();
     }
@@ -122,7 +112,6 @@ public class Plant {
                 ", alarmDateTime=" + alarmDateTime +
                 ", alarmPeriod=" + alarmPeriod +
                 ", imagePath='" + imagePath + '\'' +
-                ", alarmId=" + alarmId +
                 '}';
     }
 }

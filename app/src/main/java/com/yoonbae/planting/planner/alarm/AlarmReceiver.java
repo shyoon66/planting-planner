@@ -26,14 +26,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationChannel notificationChannel = getNotificationChannel();
         notificationManager.createNotificationChannel(notificationChannel);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_WATER_ALARM_ID);
-
         Bundle bundle = intent.getExtras();
-        int alarmId = 0;
-        if (bundle != null) {
-            alarmId = bundle.getInt("alarmId");
-        }
-
+        int alarmId = getAlarmId(bundle);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_WATER_ALARM_ID);
         String name = intent.getStringExtra("name");
         builder
             .setContentTitle(context.getResources().getString(R.string.app_name))
@@ -59,5 +54,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         notificationChannel.setVibrationPattern(new long[] {100, 200, 100, 200});
         notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
         return notificationChannel;
+    }
+
+    private int getAlarmId(Bundle bundle) {
+        if (bundle == null) {
+            return 0;
+        }
+        return bundle.getInt("alarmId");
     }
 }

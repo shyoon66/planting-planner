@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
         waterAlarmDays.clear();
         plantEvents.clear();
-        LocalDate firstDayOfTheMonth = date.getDate();
+        LocalDate firstDayOfTheMonth = DateUtils.getFirstDayOfTheMonth(date);
         LocalDate lastDayOfTheMonth = DateUtils.getLastDayOfTheMonth(date);
         for (Plant plant : plants) {
             addWaterAlarmDays(plant, firstDayOfTheMonth, lastDayOfTheMonth);
@@ -106,17 +106,18 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     }
 
     private void addWaterAlarmDays(Plant plant, LocalDate firstDayOfTheMonth, LocalDate lastDayOfTheMonth) {
-        LocalDate alarmStartDate = LocalDate.ofEpochDay(plant.getAlarmDate().toEpochDay());
-        if (alarmStartDate.isAfter(lastDayOfTheMonth)) {
+        LocalDate startAlarmDate = LocalDate.ofEpochDay(plant.getAlarmDate().toEpochDay());
+        if (startAlarmDate.isAfter(lastDayOfTheMonth)) {
             return;
         }
 
-        LocalDate alarmDate = LocalDate.ofEpochDay(alarmStartDate.toEpochDay());
+        LocalDate alarmDate = LocalDate.ofEpochDay(startAlarmDate.toEpochDay());
         int alarmPeriod = plant.getAlarmPeriod();
         while (isNotAfterLastDayOfTheMonth(alarmDate, lastDayOfTheMonth)) {
             if (isValidAlarmDate(firstDayOfTheMonth, alarmDate)) {
-                waterAlarmDays.add(CalendarDay.from(alarmDate));
-                plantEvents.add(new PlantEvent(plant.getId(), plant.getName(), plant.getAlarmTime(), CalendarDay.from(alarmDate)));
+                CalendarDay calendarDay = CalendarDay.from(alarmDate);
+                waterAlarmDays.add(calendarDay);
+                plantEvents.add(new PlantEvent(plant.getId(), plant.getName(), plant.getAlarmTime(), calendarDay));
             }
             alarmDate = alarmDate.plusDays(alarmPeriod);
         }

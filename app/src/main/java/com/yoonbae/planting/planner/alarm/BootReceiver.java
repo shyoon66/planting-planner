@@ -9,6 +9,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@ action = " + action);
         if (!"android.intent.action.BOOT_COMPLETED".equals(action)) {
             return;
         }

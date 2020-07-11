@@ -25,6 +25,7 @@ public class BootWaterAlarm extends AppCompatActivity {
     private void initWaterAlarms() {
         plantRepository.findPlantsWithWateringAlarmSet().observe(this, plants -> {
             for (Plant plant : plants) {
+                System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22 plant = " + plant);
                 initWaterAlarm(plant);
             }
         });

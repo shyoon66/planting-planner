@@ -43,6 +43,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
@@ -130,7 +132,15 @@ public class InsertActivity extends AppCompatActivity {
                 plant.setId(plantId);
                 updatePlantAndSetWaterAlarm(plant);
             } else {
-                savePlantAndSetWaterAlarm(plant);
+                try {
+                    savePlantAndSetWaterAlarm(plant);
+                } catch (ExecutionException | InterruptedException e) {
+                    if (e instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Toast.makeText(getApplicationContext(), "식물 등록이 실패했습니다.\n잠시 후에 다시 시도해 주세요.", Toast.LENGTH_LONG).show();
+                    Log.w(TAG, e);
+                }
             }
         });
     }
@@ -325,14 +335,13 @@ public class InsertActivity extends AppCompatActivity {
         return plant;
     }
 
-    private void savePlantAndSetWaterAlarm(Plant plant) {
-        plantViewModel.insert(plant);
-        plantViewModel.findLatestPlantId().observe(this, latestPlantId -> {
-            setWaterAlarm(plant, latestPlantId);
-            Intent intent = new Intent(InsertActivity.this, ListActivity.class);
-            startActivity(intent);
-            finish();
-        });
+    private void savePlantAndSetWaterAlarm(Plant plant) throws ExecutionException, InterruptedException {
+        Future<Long> insertFuture = plantViewModel.insert(plant);
+        int latestPlantId = insertFuture.get().intValue();
+        setWaterAlarm(plant, latestPlantId);
+        Intent intent = new Intent(InsertActivity.this, ListActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void updatePlantAndSetWaterAlarm(Plant plant) {

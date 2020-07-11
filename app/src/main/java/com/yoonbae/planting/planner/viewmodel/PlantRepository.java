@@ -9,6 +9,7 @@ import com.yoonbae.planting.planner.data.PlantDao;
 import com.yoonbae.planting.planner.data.PlantDatabase;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
@@ -24,8 +25,8 @@ public class PlantRepository {
         plantsWithWateringAlarmSet = plantDao.findPlantsWithWateringAlarmSet();
     }
 
-    public void insert(Plant plant) {
-        databaseWriteExecutor.execute(() -> plantDao.insert(plant));
+    public Future<Long> insert(Plant plant) {
+        return databaseWriteExecutor.submit(() -> plantDao.insert(plant));
     }
 
     public void update(Plant plant) {
@@ -38,10 +39,6 @@ public class PlantRepository {
 
     public LiveData<Plant> findById(Integer id) {
         return plantDao.findById(id);
-    }
-
-    public LiveData<Integer> findLatestPlantId() {
-        return plantDao.findLatestPlantId();
     }
 
     public LiveData<List<Plant>> findAll() {

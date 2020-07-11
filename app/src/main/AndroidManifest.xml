@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.yoonbae.planting.planner">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -36,7 +37,8 @@
         <activity android:name=".ListActivity" />
         <activity android:name=".InsertActivity" />
         <activity android:name=".ViewActivity" />
-        <receiver android:name=".alarm.BootReceiver" android:enabled="false">
+        <activity android:name=".alarm.BootWaterAlarm" tools:ignore="Instantiatable" />
+        <receiver android:name=".alarm.BootReceiver" android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
