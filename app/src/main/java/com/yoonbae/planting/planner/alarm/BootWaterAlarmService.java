@@ -9,10 +9,10 @@ import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.util.DateUtils;
 import com.yoonbae.planting.planner.viewmodel.PlantRepository;
 
-public class BootWaterAlarm extends AppCompatActivity {
+public class BootWaterAlarmService extends AppCompatActivity {
     private PlantRepository plantRepository;
 
-    public BootWaterAlarm(Application application) {
+    public BootWaterAlarmService(Application application) {
         plantRepository = new PlantRepository(application);
     }
 
@@ -25,7 +25,6 @@ public class BootWaterAlarm extends AppCompatActivity {
     private void initWaterAlarms() {
         plantRepository.findPlantsWithWateringAlarmSet().observe(this, plants -> {
             for (Plant plant : plants) {
-                System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22 plant = " + plant);
                 initWaterAlarm(plant);
             }
         });
