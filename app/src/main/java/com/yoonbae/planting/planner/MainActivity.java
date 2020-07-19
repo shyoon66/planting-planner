@@ -3,6 +3,7 @@ package com.yoonbae.planting.planner;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
             switch (item.getItemId()) {
                 case R.id.action_list:
                     intent = new Intent(MainActivity.this, ListActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
+                case R.id.action_settings:
+                    intent = new Intent(MainActivity.this, SettingsActivity.class);
                     startActivity(intent);
                     finish();
                     break;

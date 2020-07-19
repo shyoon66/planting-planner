@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -16,6 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".OpenSourceLicenseActivity"></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -37,8 +41,14 @@
         <activity android:name=".ListActivity" />
         <activity android:name=".InsertActivity" />
         <activity android:name=".ViewActivity" />
-        <activity android:name=".alarm.BootWaterAlarmService" tools:ignore="Instantiatable" />
-        <receiver android:name=".alarm.BootReceiver" android:enabled="true" android:exported="false">
+        <activity
+            android:name=".alarm.BootWaterAlarmService"
+            tools:ignore="Instantiatable" />
+
+        <receiver
+            android:name=".alarm.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

@@ -17,7 +17,7 @@
         app:showAsAction="ifRoom"
         app:labelVisibilityMode="labeled"/>
     <item
-        android:id="@+id/action_myInfo"
+        android:id="@+id/action_settings"
         android:icon="@drawable/outline_settings_black_24"
         android:title="@string/setting"
         android:background="#00ff0000"

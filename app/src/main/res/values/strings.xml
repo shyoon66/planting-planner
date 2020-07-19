@@ -43,4 +43,14 @@
         <item>29일</item>
         <item>30일</item>
     </string-array>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="setting_header">설정</string>
+
+    <string name="push_title">푸쉬 알람</string>
+    <string name="vibration_title">진동</string>
+    <string name="sound_title">소리</string>
+    <string name="open_source_title">오픈소스 라이선스</string>
+
+    <string name="open_source_summary">오픈소스 소프트웨어에 대한 라이선스 세부정보</string>
 </resources>

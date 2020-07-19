@@ -2,6 +2,7 @@ package com.yoonbae.planting.planner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,6 +58,12 @@ public class ListActivity extends AppCompatActivity {
                 case R.id.action_calendar:
                     intent = new Intent(ListActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
+                    break;
+                case R.id.action_settings:
+                    intent = new Intent(ListActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    finish();
                     break;
             }
             return false;
