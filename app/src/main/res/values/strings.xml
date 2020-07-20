@@ -46,6 +46,7 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
     <string name="setting_header">설정</string>
+    <string name="info_header">정보</string>
 
     <string name="push_title">푸쉬 알람</string>
     <string name="vibration_title">진동</string>

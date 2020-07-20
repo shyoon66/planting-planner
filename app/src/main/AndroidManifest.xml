@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".OpenSourceLicenseActivity"></activity>
+        <activity android:name=".OpenSourceListActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />

@@ -35,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             Optional<Preference> optOpenSource = Optional.ofNullable(findPreference("open_source"));
             optOpenSource.ifPresent(openSource -> openSource.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent(getContext(), OpenSourceLicenseActivity.class);
+                Intent intent = new Intent(getContext(), OpenSourceListActivity.class);
                 startActivity(intent);
                 return true;
             }));

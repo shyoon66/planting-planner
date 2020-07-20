@@ -16,6 +16,10 @@
             app:key="sound"
             app:title="@string/sound_title" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/info_header">
+
         <Preference
             app:key="open_source"
             app:title="@string/open_source_title"
