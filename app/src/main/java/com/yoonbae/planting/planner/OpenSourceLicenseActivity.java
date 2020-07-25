@@ -20,26 +20,26 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_source_license);
         initToolBar();
+        initActionBar();
         Intent intent = getIntent();
         String openSourceName = intent.getStringExtra("openSourceName");
-        initActionBar();
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText(openSourceName);
+        initToolBarTitle(openSourceName);
+        String license = getLicense(intent);
+        initLicenseTextView(license);
+    }
+
+    private String getLicense(Intent intent) {
         String license = Optional.ofNullable(intent.getStringExtra("license")).orElse("");
-        license = license.replaceAll("\n", Objects.requireNonNull(System.getProperty("line.separator")));
-        TextView licenseTextView = findViewById(R.id.license);
-        licenseTextView.setText(license);
-        licenseTextView.setMovementMethod(new ScrollingMovementMethod());
+        return license.replaceAll("\n", Objects.requireNonNull(System.getProperty("line.separator")));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(OpenSourceLicenseActivity.this, OpenSourceListActivity.class);
-                startActivity(intent);
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(OpenSourceLicenseActivity.this, OpenSourceListActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -58,5 +58,16 @@ public class OpenSourceLicenseActivity extends AppCompatActivity {
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initToolBarTitle(String openSourceName) {
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(openSourceName);
+    }
+
+    private void initLicenseTextView(String license) {
+        TextView licenseTextView = findViewById(R.id.license);
+        licenseTextView.setText(license);
+        licenseTextView.setMovementMethod(new ScrollingMovementMethod());
     }
 }
