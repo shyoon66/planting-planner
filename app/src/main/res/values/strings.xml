@@ -11,7 +11,21 @@
     <string name="file_provider_authorities">com.yoonbae.planting.planner</string>
     <string name="save">저장</string>
     <string name="list">목록</string>
-    <string-array name="waterPeriod">
+    <string-array name="months_array">
+        <item>1월</item>
+        <item>2월</item>
+        <item>3월</item>
+        <item>4월</item>
+        <item>5월</item>
+        <item>6월</item>
+        <item>7월</item>
+        <item>8월</item>
+        <item>9월</item>
+        <item>10월</item>
+        <item>11월</item>
+        <item>12월</item>
+    </string-array>
+    <string-array name="water_period">
         <item>1일</item>
         <item>2일</item>
         <item>3일</item>
@@ -44,14 +58,13 @@
         <item>30일</item>
     </string-array>
     <string name="title_activity_settings">SettingsActivity</string>
-
     <string name="setting_header">설정</string>
     <string name="info_header">정보</string>
-
-    <string name="push_title">푸쉬 알람</string>
+    <string name="push_title">푸시 알림</string>
     <string name="vibration_title">진동</string>
     <string name="sound_title">소리</string>
     <string name="open_source_title">오픈소스 라이선스</string>
-
     <string name="open_source_summary">오픈소스 소프트웨어에 대한 라이선스 세부정보</string>
+    <string name="version_title">버전</string>
+    <string name="version">1.0.0</string>
 </resources>

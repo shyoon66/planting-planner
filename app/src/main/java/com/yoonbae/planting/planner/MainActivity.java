@@ -3,7 +3,6 @@ package com.yoonbae.planting.planner;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,6 +17,7 @@ import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+import com.prolificinteractive.materialcalendarview.format.MonthArrayTitleFormatter;
 import com.yoonbae.planting.planner.adapter.ListViewAdapter;
 import com.yoonbae.planting.planner.calendar.decorator.EventDecorator;
 import com.yoonbae.planting.planner.calendar.decorator.HighlightWeekendsDecorator;
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     private void initCalendar() {
         calendarView = findViewById(R.id.calendarView);
         calendarView.setDateSelected(CalendarDay.today(), true);
+        calendarView.setTitleFormatter(new MonthArrayTitleFormatter(getResources().getTextArray(R.array.months_array)));
         calendarView.state().edit()
                 .setFirstDayOfWeek(DayOfWeek.SUNDAY)
                 .setMinimumDate(CalendarDay.from(2020, 1, 1))

@@ -109,7 +109,7 @@ public class InsertActivity extends AppCompatActivity {
             (periodSpinner.getSelectedView()).setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         });
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.waterPeriod));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.water_period));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         Button saveBtn = findViewById(R.id.saveBtn);
@@ -177,7 +177,7 @@ public class InsertActivity extends AppCompatActivity {
             alarmTimeTextView.setText(alarmTime);
 
             Resources res = getResources();
-            String[] waterPeriodArr = res.getStringArray(R.array.waterPeriod);
+            String[] waterPeriodArr = res.getStringArray(R.array.water_period);
             int alarmPeriod = plant.getAlarmPeriod();
             for (int i = 0; i < waterPeriodArr.length; i++) {
                 int waterPeriod = Integer.parseInt(waterPeriodArr[i].substring(0, waterPeriodArr[i].length() - 1));

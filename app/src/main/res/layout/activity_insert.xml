@@ -175,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="133dp"
             android:layout_marginTop="16dp"
-            android:entries="@array/waterPeriod"
+            android:entries="@array/water_period"
             android:overlapAnchor="false"
             android:spinnerMode="dropdown"
             android:textColor="#797979"
