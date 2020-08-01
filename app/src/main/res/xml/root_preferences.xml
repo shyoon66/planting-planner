@@ -8,6 +8,11 @@
 
         <SwitchPreferenceCompat
             app:dependency="push"
+            app:key="sound"
+            app:title="@string/sound_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="push"
             app:key="vibration"
             app:title="@string/vibration_title" />
 
