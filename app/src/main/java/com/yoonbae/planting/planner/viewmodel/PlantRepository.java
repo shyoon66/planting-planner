@@ -48,4 +48,8 @@ public class PlantRepository {
     public LiveData<List<Plant>> findPlantsWithWateringAlarmSet() {
         return plantsWithWateringAlarmSet;
     }
+
+    public LiveData<List<Plant>> findByName(String name) {
+        return plantDao.findByName(name);
+    }
 }

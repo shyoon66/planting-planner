@@ -45,4 +45,8 @@ public class PlantViewModel extends AndroidViewModel {
     public LiveData<List<Plant>> findPlantsWithWateringAlarmSet() {
         return plantsWithWateringAlarmSet;
     }
+
+    public LiveData<List<Plant>> findByName(String name) {
+        return repository.findByName(name);
+    }
 }

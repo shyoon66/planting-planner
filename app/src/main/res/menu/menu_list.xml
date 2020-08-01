@@ -3,4 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.yoonbae.plantingplanner.ListActivity">
 
+    <item android:id="@+id/action_search"
+        android:title="검색"
+        android:icon="@drawable/baseline_search_24"
+        android:layout_gravity="right"
+        android:iconTint="@android:color/black"
+        app:showAsAction="always"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
 </menu>

@@ -21,12 +21,15 @@ public interface PlantDao {
     @Delete
     void delete(Plant plant);
 
-    @Query("SELECT * FROM PLANT p WHERE p.id = :id LIMIT 1")
+    @Query("SELECT * FROM PLANT P WHERE P.id = :id LIMIT 1")
     LiveData<Plant> findById(Integer id);
 
     @Query("SELECT * FROM PLANT")
     LiveData<List<Plant>> findAll();
 
-    @Query("SELECT * FROM PLANT P where p.ALARM = 1")
+    @Query("SELECT * FROM PLANT P where P.ALARM = 1")
     LiveData<List<Plant>> findPlantsWithWateringAlarmSet();
+
+    @Query("SELECT * FROM PLANT P where P.NAME LIKE '%' || :name || '%'")
+    LiveData<List<Plant>> findByName(String name);
 }

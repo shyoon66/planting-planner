@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,10 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yoonbae.planting.planner.adapter.MyRecyclerViewAdapter;
+import com.yoonbae.planting.planner.data.Plant;
 import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
+
+import java.util.List;
 
 public class ListActivity extends AppCompatActivity {
     private PlantViewModel plantViewModel;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void settingPlantList() {
-        RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
+        recyclerView = findViewById(R.id.main_recyclerView);
         plantViewModel.findAll().observe(this, plants -> {
             recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
             MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);
@@ -91,6 +96,40 @@ public class ListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_list, menu);
+        searchViewSettings(menu);
         return true;
+    }
+
+    private void searchViewSettings(Menu menu) {
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("식물 이름을 입력하세요.");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText == null || newText.equals("")) {
+                    plantViewModel
+                            .findAll()
+                            .observe(ListActivity.this, this::recyclerViewSettings);
+                } else {
+                    plantViewModel
+                            .findByName(newText)
+                            .observe(ListActivity.this, this::recyclerViewSettings);
+                }
+                return false;
+            }
+
+            private void recyclerViewSettings(List<Plant> plants) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
+                MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);
+                recyclerView.setAdapter(myRecyclerViewAdapter);
+                myRecyclerViewAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
