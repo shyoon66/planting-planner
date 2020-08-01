@@ -2,10 +2,8 @@ package com.yoonbae.planting.planner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yoonbae.planting.planner.adapter.MyRecyclerViewAdapter;
 import com.yoonbae.planting.planner.viewmodel.PlantViewModel;
 
@@ -25,12 +24,12 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
         initToolBar();
         initActionBar();
         initBottomNavigationView();
-        plantViewModel = new ViewModelProvider(this).get(PlantViewModel.class);
-        final RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
-        settingPlantList(recyclerView);
+        initFloatingActionButton();
+        settingPlantList();
     }
 
     private void initToolBar() {
@@ -56,12 +55,12 @@ public class ListActivity extends AppCompatActivity {
             Intent intent;
             switch (item.getItemId()) {
                 case R.id.action_calendar:
-                    intent = new Intent(ListActivity.this, MainActivity.class);
+                    intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                     finish();
                     break;
                 case R.id.action_settings:
-                    intent = new Intent(ListActivity.this, SettingsActivity.class);
+                    intent = new Intent(this, SettingsActivity.class);
                     startActivity(intent);
                     finish();
                     break;
@@ -70,7 +69,16 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
-    private void settingPlantList(RecyclerView recyclerView) {
+    private void initFloatingActionButton() {
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
+        floatingActionButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, InsertActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void settingPlantList() {
+        RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         plantViewModel.findAll().observe(this, plants -> {
             recyclerView.setLayoutManager(new LinearLayoutManager(ListActivity.this));
             MyRecyclerViewAdapter myRecyclerViewAdapter = new MyRecyclerViewAdapter(plants, ListActivity.this);
@@ -84,23 +92,5 @@ public class ListActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_list, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                intent = new Intent(ListActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-            case R.id.action_insert:
-                intent = new Intent(ListActivity.this, InsertActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

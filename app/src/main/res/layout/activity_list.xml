@@ -29,7 +29,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="56dp">
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -44,16 +43,15 @@
         app:layout_behavior=".navigation.BottomNavigationViewBehavior">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="80dp"
-            android:clickable="true"
-            app:backgroundTint="@color/browser_actions_bg_grey"
-            app:layout_anchor="@+id/main_recyclerView"
-            app:layout_anchorGravity="right|bottom"
-            app:srcCompat="@drawable/baseline_add_black_24" />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="80dp"
+        android:clickable="true"
+        app:layout_anchor="@+id/main_recyclerView"
+        app:layout_anchorGravity="right|bottom"
+        app:srcCompat="@drawable/baseline_add_black_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
