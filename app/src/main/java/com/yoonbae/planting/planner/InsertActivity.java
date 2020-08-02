@@ -156,6 +156,7 @@ public class InsertActivity extends AppCompatActivity {
             Uri imageUri = Uri.fromFile(new File(plant.getImagePath()));
             this.imageUri = imageUri;
             Glide.with(this).load(imageUri).into(imageView);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             EditText plantNameEditText = plantNameLayOut.getEditText();
             assert plantNameEditText != null;
@@ -241,6 +242,7 @@ public class InsertActivity extends AppCompatActivity {
     private void setImage(Uri photoUri) {
         imageUri = photoUri;
         Glide.with(this).load(photoUri).into(imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
     private String getMonthStr(int monthOfYear) {
