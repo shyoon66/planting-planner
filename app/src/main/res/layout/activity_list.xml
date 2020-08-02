@@ -49,7 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="80dp"
+        android:backgroundTint="@android:color/white"
         android:clickable="true"
+        app:backgroundTint="@android:color/black"
         app:layout_anchor="@+id/main_recyclerView"
         app:layout_anchorGravity="right|bottom"
         app:srcCompat="@drawable/baseline_add_black_24" />
