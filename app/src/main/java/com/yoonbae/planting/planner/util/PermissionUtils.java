@@ -16,12 +16,14 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.util.List;
 
 public abstract class PermissionUtils {
+
     public static PermissionType request(Activity activity) {
         final PermissionType[] permissionType = new PermissionType[1];
         Dexter.withActivity(activity)
                 .withPermissions(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
                 .withListener(new MultiplePermissionsListener() {
                     @Override
@@ -34,11 +36,15 @@ public abstract class PermissionUtils {
                     }
 
                     @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                    public void onPermissionRationaleShouldBeShown(
+                            List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
                 })
-                .withErrorListener(error -> Toast.makeText(activity, "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show())
+                .withErrorListener(error -> Toast.makeText(
+                        activity,
+                        "Error occurred! " + error.toString(),
+                        Toast.LENGTH_SHORT).show())
                 .check();
 
         return permissionType[0];
@@ -60,11 +66,15 @@ public abstract class PermissionUtils {
                     }
 
                     @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                    public void onPermissionRationaleShouldBeShown(
+                            PermissionRequest permission, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
                 })
-                .withErrorListener(error -> Toast.makeText(activity, "Error occurred! " + error.toString(), Toast.LENGTH_SHORT).show())
+                .withErrorListener(error -> Toast.makeText(
+                        activity,
+                        "Error occurred! " + error.toString(),
+                        Toast.LENGTH_SHORT).show())
                 .check();
 
         return permissionType[0];

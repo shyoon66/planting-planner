@@ -2,11 +2,14 @@ package com.yoonbae.planting.planner;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -42,12 +46,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class InsertActivity extends AppCompatActivity {
     private static final String TAG = "InsertActivity";
+    private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_ALBUM = 1;
     private ImageView imageView;
     private TextInputLayout plantNameLayOut;
@@ -86,7 +92,7 @@ public class InsertActivity extends AppCompatActivity {
         imageView.setOnClickListener(v -> {
             PermissionType permissionType = PermissionUtils.request(this);
             if (permissionType == PermissionType.GRANTED) {
-                openAlbum();
+                showImageDialog();
             } else if (permissionType == PermissionType.DENIED) {
                 showSettingsDialog();
             }
@@ -143,6 +149,47 @@ public class InsertActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showImageDialog() {
+        final String[] items = {"카메라로 찍기", "앨범에서 가져오기", "취소"};
+        AlertDialog.Builder ab = new AlertDialog.Builder(this);
+        ab.setTitle("사진 선택");
+        ab.setItems(items, (dialog, index) -> {
+            if (index == 0) {
+                startCamera();
+            } else if(index == 1) {
+                openAlbum();
+            }
+            dialog.dismiss();
+        });
+        ab.show();
+    }
+
+    private void startCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            File photoFile = createImageFile();
+            Uri photoUri = FileProvider.getUriForFile(
+                    this, "com.yoonbae.planting.planner", photoFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            imageUri = photoUri;
+            startActivityForResult(intent, REQUEST_CAMERA);
+        } catch(IOException e) {
+            Toast.makeText(
+        this, "카메라 실행중에 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Log.e("startCamera IOException", Objects.requireNonNull(e.getMessage()));
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String imageFileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (storageDir == null || (!storageDir.exists() && !storageDir.mkdirs())) {
+            Toast.makeText(
+        this, "이미지를 저장할 폴더를 생성하지 못했습니다.", Toast.LENGTH_SHORT).show();
+        }
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     private void initPlant() {
@@ -232,15 +279,17 @@ public class InsertActivity extends AppCompatActivity {
             Toast.makeText(this, "취소 되었습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (requestCode == REQUEST_ALBUM) {
+        if (requestCode == REQUEST_CAMERA) {
+            setImage(imageUri);
+        } else if (requestCode == REQUEST_ALBUM) {
             Uri photoUri = data.getData();
             Log.d(TAG, "PICK_FROM_ALBUM photoUri: " + photoUri);
+            imageUri = photoUri;
             setImage(photoUri);
         }
     }
 
     private void setImage(Uri photoUri) {
-        imageUri = photoUri;
         Glide.with(this).load(photoUri).into(imageView);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
