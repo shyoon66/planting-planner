@@ -53,12 +53,12 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent;
             switch (item.getItemId()) {
                 case R.id.action_calendar:
-                    intent = new Intent(SettingsActivity.this, MainActivity.class);
+                    intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                     finish();
                     break;
                 case R.id.action_list:
-                    intent = new Intent(SettingsActivity.this, ListActivity.class);
+                    intent = new Intent(this, ListActivity.class);
                     startActivity(intent);
                     finish();
                     break;

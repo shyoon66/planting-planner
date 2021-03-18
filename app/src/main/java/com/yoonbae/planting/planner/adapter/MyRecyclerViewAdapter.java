@@ -86,10 +86,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return plantList.size();
     }
 
-    private class RowCell extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView name;
-        private ImageButton imageButton;
+    private static class RowCell extends RecyclerView.ViewHolder {
+        private final ImageView imageView;
+        private final TextView name;
+        private final ImageButton imageButton;
 
         private RowCell(View view) {
             super(view);

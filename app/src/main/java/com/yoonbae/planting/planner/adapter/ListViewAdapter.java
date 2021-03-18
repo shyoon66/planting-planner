@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListViewAdapter extends BaseAdapter {
-    private List<PlantEvent> listViewItemList = new ArrayList<>();
+    private final List<PlantEvent> listViewItemList = new ArrayList<>();
 
     public ListViewAdapter() {}
 

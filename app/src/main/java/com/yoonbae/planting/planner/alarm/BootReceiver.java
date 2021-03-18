@@ -10,9 +10,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (action != null && action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Intent waterAlarmIntent = new Intent(context, BootWaterAlarmService.class);
-            waterAlarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(waterAlarmIntent);
+            context.startForegroundService(new Intent(context, BootWaterAlarmService.class));
         }
     }
 }
