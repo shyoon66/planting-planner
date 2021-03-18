@@ -1,5 +1,6 @@
 package com.yoonbae.planting.planner;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -53,6 +54,7 @@ public class ListActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void initBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.setSelectedItemId(R.id.action_list);

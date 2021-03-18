@@ -28,9 +28,9 @@ import java.io.File;
 import java.util.List;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<Plant> plantList;
-    private Context context;
-    private PlantViewModel plantViewModel;
+    private final List<Plant> plantList;
+    private final Context context;
+    private final PlantViewModel plantViewModel;
 
     public MyRecyclerViewAdapter(List<Plant> plantList, Context context) {
         this.plantList = plantList;

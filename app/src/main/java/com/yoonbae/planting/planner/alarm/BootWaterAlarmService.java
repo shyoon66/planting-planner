@@ -12,6 +12,8 @@ import com.yoonbae.planting.planner.viewmodel.PlantRepository;
 public class BootWaterAlarmService extends AppCompatActivity {
     private PlantRepository plantRepository;
 
+    public BootWaterAlarmService() {}
+
     public BootWaterAlarmService(Application application) {
         plantRepository = new PlantRepository(application);
     }

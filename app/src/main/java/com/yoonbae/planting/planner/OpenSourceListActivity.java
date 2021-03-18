@@ -56,12 +56,11 @@ public class OpenSourceListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(OpenSourceListActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(OpenSourceListActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

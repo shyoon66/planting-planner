@@ -13,7 +13,7 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import org.threeten.bp.LocalDate;
 
 public class OneDayDecorator implements DayViewDecorator {
-    private CalendarDay date = CalendarDay.today();
+    private final CalendarDay date = CalendarDay.today();
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {

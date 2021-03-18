@@ -41,7 +41,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_WATER_ALARM_ID);
         String name = intent.getStringExtra("name");
         builder
-            .setContentTitle(context.getResources().getString(R.string.app_name))
+            //.setContentTitle(context.getResources().getString(R.string.app_name))
             .setContentText(name + " 물주기 알람입니다.")
             .setDefaults(Notification.DEFAULT_ALL)
             .setAutoCancel(true)

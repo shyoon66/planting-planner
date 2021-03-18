@@ -1,5 +1,6 @@
 package com.yoonbae.planting.planner;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
     private MaterialCalendarView calendarView;
     private ListView listview;
     private List<Plant> plants = new ArrayList<>();
-    private List<CalendarDay> waterAlarmDays = new ArrayList<>();
-    private List<PlantEvent> plantEvents = new ArrayList<>();
+    private final List<CalendarDay> waterAlarmDays = new ArrayList<>();
+    private final List<PlantEvent> plantEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnDateSelectedLis
         initWaterAlarmDays();
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void initBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavView);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {

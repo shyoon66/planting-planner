@@ -2,7 +2,6 @@ package com.yoonbae.planting.planner;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -99,13 +99,7 @@ public class InsertActivity extends AppCompatActivity {
         });
 
         adoptionDate.setOnClickListener(v -> showDatePicker(adoptionDate));
-        alarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                setEnableAlarmItems(true);
-            } else {
-                setEnableAlarmItems(false);
-            }
-        });
+        alarm.setOnCheckedChangeListener((buttonView, isChecked) -> setEnableAlarmItems(isChecked));
 
         alarmDateTextView.setOnClickListener(v -> showDatePicker(alarmDateTextView));
         alarmTimeTextView.setOnClickListener(v -> showTimePicker());
@@ -353,17 +347,24 @@ public class InsertActivity extends AppCompatActivity {
         }
 
         EditText plantNameEditText = plantNameLayOut.getEditText();
-        String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
-        plant.setName(plantName);
+        if (plantNameEditText != null) {
+            String plantName = Optional.of(plantNameEditText.getText().toString()).orElse("");
+            plant.setName(plantName);
+        }
 
         EditText plantDescEditText = plantDescLayOut.getEditText();
-        String plantDesc = Optional.of(plantDescEditText.getText().toString()).orElse("");
-        plant.setDesc(plantDesc);
+        if (plantDescEditText != null) {
+            String plantDesc = Optional.of(plantDescEditText.getText().toString()).orElse("");
+            plant.setDesc(plantDesc);
+        }
 
         TextView adoptionDateTextView = findViewById(R.id.adoptionDate);
-        String adoptionDate = Optional.of(adoptionDateTextView.getEditableText().toString()).orElse("");
-        if (!adoptionDate.equals("날짜를 선택해주세요.")) {
-            plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
+        if (adoptionDateTextView != null) {
+            Editable adoptionDateEditableText = adoptionDateTextView.getEditableText();
+            String adoptionDate = Optional.of(adoptionDateEditableText.toString()).orElse("");
+            if (!adoptionDate.equals("날짜를 선택해주세요.")) {
+                plant.setAdoptionDate(LocalDate.parse(adoptionDate, DateTimeFormatter.ISO_DATE));
+            }
         }
 
         plant.setAlarm(alarm.isChecked());

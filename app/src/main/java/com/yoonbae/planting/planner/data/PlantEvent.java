@@ -5,10 +5,10 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.time.LocalTime;
 
 public class PlantEvent {
-    private Integer id;
-    private String name;
-    private String alarmMessage;
-    private CalendarDay calendarDay;
+    private final Integer id;
+    private final String name;
+    private final String alarmMessage;
+    private final CalendarDay calendarDay;
 
     public PlantEvent(Integer id, String name, LocalTime alarmTime, CalendarDay calendarDay) {
         this.id = id;

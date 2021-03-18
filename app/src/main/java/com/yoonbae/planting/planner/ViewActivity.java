@@ -95,6 +95,9 @@ public class ViewActivity extends AppCompatActivity {
     }
 
     private void setPlantAdoptionDate(LocalDate adoptionDate) {
+        if (adoptionDate == null) {
+            return;
+        }
         TextView adoptionDateTextView = findViewById(R.id.adoptionDate);
         adoptionDateTextView.setText(adoptionDate.format(DateTimeFormatter.ISO_DATE));
     }

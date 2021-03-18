@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class EventDecorator implements DayViewDecorator {
-    private int color;
-    private HashSet<CalendarDay> dates;
+    private final int color;
+    private final HashSet<CalendarDay> dates;
     //private Drawable drawable;
 
     public EventDecorator(int color, Collection<CalendarDay> dates, Activity context) {

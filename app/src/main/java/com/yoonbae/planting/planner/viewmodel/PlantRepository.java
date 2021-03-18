@@ -14,9 +14,9 @@ import java.util.concurrent.Future;
 import static com.yoonbae.planting.planner.data.PlantDatabase.databaseWriteExecutor;
 
 public class PlantRepository {
-    private PlantDao plantDao;
-    private LiveData<List<Plant>> allPlants;
-    private LiveData<List<Plant>> plantsWithWateringAlarmSet;
+    private final PlantDao plantDao;
+    private final LiveData<List<Plant>> allPlants;
+    private final LiveData<List<Plant>> plantsWithWateringAlarmSet;
 
     public PlantRepository(Application application) {
         PlantDatabase plantDatabase = PlantDatabase.getDatabase(application);

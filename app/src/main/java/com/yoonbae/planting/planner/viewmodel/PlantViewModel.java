@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 public class PlantViewModel extends AndroidViewModel {
-    private PlantRepository repository;
-    private LiveData<List<Plant>> allPlants;
-    private LiveData<List<Plant>> plantsWithWateringAlarmSet;
+    private final PlantRepository repository;
+    private final LiveData<List<Plant>> allPlants;
+    private final LiveData<List<Plant>> plantsWithWateringAlarmSet;
 
     public PlantViewModel(Application application) {
         super(application);
